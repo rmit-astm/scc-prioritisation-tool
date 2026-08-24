@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Plain-language assumptions used in the Melbourne Strategic Cycling Corridor prioritisation model.">
+  <meta name="description" content="Current assumptions used in the Melbourne Strategic Cycling Corridor prioritisation model.">
   <title>Model assumptions · Melbourne SCC investment explorer</title>
   <link rel="stylesheet" href="styles.css?v=5">
-  <link rel="stylesheet" href="review.css?v=2">
+  <link rel="stylesheet" href="review.css?v=3">
 </head>
 <body class="review-page">
   <header class="site-header">
     <div>
       <h1>Melbourne SCC investment explorer</h1>
-      <p class="header-copy">Model assumptions · Greater Melbourne · Research prototype</p>
+      <p class="header-copy">Model assumptions · Greater Melbourne · Work in progress</p>
     </div>
     <nav class="site-nav" aria-label="Dashboard sections">
       <a href="index.html">Investment explorer</a>
@@ -21,87 +21,106 @@
   </header>
 
   <main class="assumptions-page">
-    <section class="assumptions-intro">
-      <p class="section-kicker">For practitioner review</p>
-      <h2>How the prioritisation model works</h2>
-      <p>This page summarises the main assumptions behind the map and benefit estimates. We would particularly like to know where the mapped network, likely treatment, delivery cost or practical feasibility does not match local knowledge.</p>
-      <div class="review-prompt">
-        <strong>What would be most useful to check</strong>
-        <ul>
-          <li>Is a selected corridor genuinely missing or inadequate, or has it already been built or funded?</li>
-          <li>Would protected infrastructure be feasible at the location shown?</li>
-          <li>Is the assumed treatment cost realistic once intersections, parking, drainage, bridges or utilities are considered?</li>
-          <li>Do the modelled order and scale of investment make practical sense?</li>
-        </ul>
-      </div>
-      <p class="contact-line">Please email corrections, evidence or general comments to <a href="mailto:afshin.jafari@rmit.edu.au?subject=Melbourne%20SCC%20prioritisation%20feedback">afshin.jafari@rmit.edu.au</a>. Project IDs shown on the map are helpful when commenting on a location.</p>
-    </section>
+    <header class="assumptions-intro">
+      <h2>Assumptions currently used</h2>
+      <p>This is a working summary of the inputs used in the dashboard. The network and results will change after the 2026 infrastructure and SCC update.</p>
+    </header>
 
     <div class="assumption-sections">
       <section class="assumption-section">
-        <h2>Network and candidate projects</h2>
+        <h2>Data dates</h2>
         <ul class="assumption-list">
-          <li><strong>Strategic corridor network.</strong><span>The current results use the Victorian Government's 2020 Strategic Cycling Corridor geometry. We are obtaining the latest SCC layer and will update the analysis when it is available.</span></li>
-          <li><strong>Existing infrastructure.</strong><span>Facility status is currently derived from cycling attributes in the MATSim network and spatially reconciled along each SCC. A July 2026 OSM-based refresh is being prepared, so the present map should be treated as a modelled baseline rather than a definitive as-built inventory.</span></li>
-          <li><strong>Protected is the delivery standard.</strong><span>Separated lanes and off-road paths count as already delivered. Painted lanes and other inadequate facilities are candidates for conversion to protection; locations with no mapped facility are candidates for new protected infrastructure.</span></li>
-          <li><strong>Traffic stress.</strong><span>Level of traffic stress is derived from facility type, road class, speed and modelled traffic. Investment removes the treated corridor's high-stress exposure.</span></li>
+          <li><strong>SCC network:</strong><span>the current candidate network uses the Victorian Government's 2020 Strategic Cycling Corridor layer.</span></li>
+          <li><strong>Existing bicycle facilities:</strong><span>the current results use cycling attributes held in the MATSim network. These attributes came from an older OSM extract whose exact date was not recorded.</span></li>
+          <li><strong>2026 network update:</strong><span>a Greater Melbourne OSM extract downloaded on 23 July 2026 is available and will be used when the latest SCC layer is received.</span></li>
+          <li><strong>Travel demand and emissions:</strong><span>car trips, routes and emissions come from the calibrated 10% AToM baseline. This is not a newly calibrated 2026 travel-demand model.</span></li>
+          <li><strong>Economic appraisal:</strong><span>the appraisal starts in 2026. Dashboard monetary values are expressed in 2025 Australian dollars.</span></li>
         </ul>
       </section>
 
       <section class="assumption-section">
-        <h2>Delivery costs</h2>
+        <h2>Dashboard scenarios</h2>
         <ul class="assumption-list">
-          <li><strong>Permanent P50 case.</strong><span>New protected infrastructure costs $1.00 million/km and conversion of an inadequate facility costs $0.45 million/km.</span></li>
-          <li><strong>Low-complexity case.</strong><span>New infrastructure costs $0.50 million/km and a straightforward protected retrofit costs $0.05 million/km. This is an optimistic bound, not an assumption that every corridor can be delivered cheaply.</span></li>
-          <li><strong>Lifecycle costs.</strong><span>The appraisal includes annual maintenance, renewal, residual value and a 10% programme-management allowance over 30 years.</span></li>
-          <li><strong>Site complexity is not mapped.</strong><span>The kilometre rates do not identify major intersection works, bridges, drainage, lighting, utility relocation, parking removal or other location-specific constraints.</span></li>
+          <li><strong>Baseline:</strong><span>zero new funding. The map shows the bicycle facilities represented in the current model network.</span></li>
+          <li><strong>Permanent P50:</strong><span>uses the central Victorian benchmark construction and lifecycle costs.</span></li>
+          <li><strong>Low complexity:</strong><span>uses lower costs for straightforward protected construction or retrofit. It is an optimistic cost case and still assumes a protected treatment.</span></li>
+          <li><strong>Use available funding:</strong><span>selects the portfolio with the largest modelled benefit within the selected funding ceiling.</span></li>
+          <li><strong>Find preferred scale:</strong><span>selects the portfolio with the largest risk-adjusted net benefit. It can leave part of the funding ceiling unspent.</span></li>
+          <li><strong>Funding levels:</strong><span>each point on the slider is optimised separately. The points are not a staged construction sequence.</span></li>
         </ul>
       </section>
 
       <section class="assumption-section">
-        <h2>Travel behaviour and bicycle routes</h2>
+        <h2>Projects and treatments</h2>
         <ul class="assumption-list">
-          <li><strong>Eligible trips.</strong><span>Only existing simulated car trips of 12 km or less can switch to bicycle. Public transport and walking trips are not reassigned.</span></li>
-          <li><strong>Response to lower traffic stress.</strong><span>The probability of switching is based on a Melbourne mode-choice estimate linking bicycle uptake to the share of a potential route exposed to high traffic stress. Parameter uncertainty is carried into the optimisation.</span></li>
-          <li><strong>Bicycle route choice.</strong><span>Potential routes use empirically estimated preferences for distance, protected and painted facilities, low-speed streets and slope. The route-choice coefficients come from Greater Bendigo and are tested through alternative specifications.</span></li>
-          <li><strong>Fixed activities.</strong><span>Origins, destinations and activity locations remain those in the AToM baseline. The model does not represent new destinations or long-run land-use change.</span></li>
+          <li><strong>Existing protected:</strong><span>separated on-road lanes, bicycle paths and shared paths are treated as already delivered.</span></li>
+          <li><strong>Upgrade candidate:</strong><span>a painted lane, shared-street treatment or other inadequate facility is converted to protected infrastructure when selected.</span></li>
+          <li><strong>New construction:</strong><span>a corridor with no mapped facility is treated as new protected infrastructure when selected.</span></li>
+          <li><strong>Traffic stress:</strong><span>link stress is based on facility type, road class, speed and modelled traffic. Selected projects are assumed to remove high-stress exposure on the treated section.</span></li>
+          <li><strong>Project conflicts:</strong><span>parallel project representations covering the same corridor section cannot both be selected.</span></li>
+        </ul>
+      </section>
+
+      <section class="assumption-section">
+        <h2>Cost assumptions</h2>
+        <ul class="assumption-list">
+          <li><strong>Permanent P50 — new:</strong><span>$1.00 million per km.</span></li>
+          <li><strong>Permanent P50 — upgrade:</strong><span>$0.45 million per km.</span></li>
+          <li><strong>Low complexity — new:</strong><span>$0.50 million per km.</span></li>
+          <li><strong>Low complexity — upgrade:</strong><span>$0.05 million per km.</span></li>
+          <li><strong>Maintenance:</strong><span>$7,500/km/year for new infrastructure and $7,000/km/year for upgrades.</span></li>
+          <li><strong>Asset life:</strong><span>25 years for new construction and 15 years for upgrades.</span></li>
+          <li><strong>Other lifecycle assumptions:</strong><span>100% renewal at the end of asset life, straight-line residual value and a 10% programme-management allowance.</span></li>
+          <li><strong>Not separately costed:</strong><span>major intersections, bridges, drainage, lighting, utilities, parking changes and other site-specific works.</span></li>
+        </ul>
+      </section>
+
+      <section class="assumption-section">
+        <h2>Travel behaviour and routing</h2>
+        <ul class="assumption-list">
+          <li><strong>Maximum trip distance:</strong><span>only existing simulated car trips of 12 km or less can switch to bicycle.</span></li>
+          <li><strong>Mode response:</strong><span>the reduction in high-stress route exposure is converted into a car-to-bicycle switching probability using a Melbourne mode-choice coefficient.</span></li>
+          <li><strong>Coefficient uncertainty:</strong><span>the central high-stress coefficient is −0.768 with a standard deviation of 0.164.</span></li>
+          <li><strong>General uptake uncertainty:</strong><span>a programme-wide lognormal multiplier with sigma 0.25 is applied across behavioural scenarios.</span></li>
+          <li><strong>Bicycle routes:</strong><span>route costs use Greater Bendigo estimates for distance, protected facilities, painted lanes, low-speed streets and slope.</span></li>
+          <li><strong>Fixed travel pattern:</strong><span>trip origins, destinations and activity locations remain those in the AToM baseline.</span></li>
         </ul>
       </section>
 
       <section class="assumption-section">
         <h2>Benefits and appraisal</h2>
         <ul class="assumption-list">
-          <li><strong>Appraisal frame.</strong><span>Benefits and costs are assessed over 30 years from 2026 using a 7% real discount rate, with 4% and 10% tested as sensitivities. Dashboard values are presented in 2025 Australian dollars.</span></li>
-          <li><strong>Benefits counted.</strong><span>The model includes avoided climate and air-pollution damage, vehicle operating costs, decongestion, health-system benefits, private health and a treated-share safety benefit.</span></li>
-          <li><strong>Simulation expansion.</strong><span>The calibrated 10% AToM population sample is expanded by ten and one modelled weekday is annualised using 230 days.</span></li>
-          <li><strong>Physical emissions.</strong><span>Avoided CO2, NOx, NO2 and PM2.5 are calculated from the simulated car trips estimated to switch. Emissions are reported separately from the broader economic benefits.</span></li>
+          <li><strong>Appraisal period:</strong><span>30 years from 2026.</span></li>
+          <li><strong>Discount rate:</strong><span>7% real in the central case, with 4% and 10% used as sensitivities.</span></li>
+          <li><strong>Benefits included:</strong><span>climate, air pollution, vehicle operating costs, decongestion, health-system benefits, private health and bicycle safety.</span></li>
+          <li><strong>Safety:</strong><span>uses a 40% risk reduction, the treated share of the bicycle route and the rule of half for new users.</span></li>
+          <li><strong>Simulation scaling:</strong><span>the 10% AToM sample is multiplied by 10 and the modelled weekday is annualised using 230 days.</span></li>
+          <li><strong>Emissions:</strong><span>avoided CO2, NOx, NO2 and PM2.5 come from the simulated car trips estimated to switch.</span></li>
         </ul>
       </section>
 
       <section class="assumption-section">
-        <h2>How projects are selected</h2>
+        <h2>Optimisation</h2>
         <ul class="assumption-list">
-          <li><strong>Risk-adjusted central case.</strong><span>The central decision rule places 25% weight on outcomes from the weakest 10% of uptake scenarios. This is a decision preference, not a behavioural estimate.</span></li>
-          <li><strong>Use available funding.</strong><span>This view selects the strongest modelled portfolio within each funding ceiling and will generally continue adding projects as the ceiling increases.</span></li>
-          <li><strong>Find preferred scale.</strong><span>This view maximises risk-adjusted net benefit and may leave funding unspent when the next available project costs more than its estimated additional benefit.</span></li>
-          <li><strong>Funding points are independent.</strong><span>Each level is solved separately. Moving the slider does not represent an agreed construction sequence, and a project selected at one level is not guaranteed to remain selected at the next.</span></li>
+          <li><strong>Central risk setting:</strong><span>25% weight is placed on the mean result from the weakest 10% of uptake scenarios.</span></li>
+          <li><strong>Risk parameter:</strong><span>the 25% weight is a decision setting, not an estimated behavioural parameter.</span></li>
+          <li><strong>Benefit evaluation:</strong><span>reported portfolios are evaluated with behavioural draws that were not used to select them.</span></li>
+          <li><strong>Solution status:</strong><span>the portfolios are best-found solutions. Valid global bounds are calculated, but the full nonlinear solutions are not proven global optima.</span></li>
         </ul>
       </section>
 
       <section class="assumption-section limitation-section">
-        <h2>Important effects not quantified</h2>
+        <h2>Not included in the quantified results</h2>
         <ul class="assumption-list">
-          <li><strong>Wider network effects.</strong><span>The model does not value benefits to existing bicycle riders, generated bicycle trips, safety-in-numbers, equity, amenity or network-learning effects.</span></li>
-          <li><strong>Land use and destinations.</strong><span>Changes in access to schools, stations, activity centres and other destinations are not modelled, nor is the additional uptake that might result from coordinated transport and land-use planning.</span></li>
-          <li><strong>Engineering feasibility.</strong><span>The selected lines are strategic investment options, not designs, funded projects or construction recommendations. Local review is needed before interpreting any location as deliverable.</span></li>
+          <li>Benefits to people already riding bicycles.</li>
+          <li>New trips generated by the completed bicycle network.</li>
+          <li>Switching from public transport or walking.</li>
+          <li>Safety-in-numbers, equity and amenity effects.</li>
+          <li>Changes in land use, destinations or long-term activity patterns.</li>
+          <li>Detailed engineering feasibility and site-specific designs.</li>
         </ul>
       </section>
     </div>
   </main>
-
-  <footer class="site-footer">
-    <div><span class="footer-badge">RESEARCH</span> The dashboard presents model outputs for review, not funded projects or engineering designs.</div>
-    <div><span class="footer-badge">CONTACT</span> <a href="mailto:afshin.jafari@rmit.edu.au">afshin.jafari@rmit.edu.au</a></div>
-  </footer>
 </body>
 </html>
