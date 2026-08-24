@@ -9,7 +9,7 @@
   <title>Melbourne SCC investment explorer</title>
   <link rel="preconnect" href="https://basemaps.cartocdn.com">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
   <header class="site-header">
@@ -42,10 +42,15 @@
           <button type="button" data-budget="100">$100m</button>
         </div>
         <p class="control-help">The slider moves between solved funding levels; it does not interpolate new projects.</p>
+        <div id="investment-message" class="investment-message" hidden>
+          <strong id="investment-message-title"></strong>
+          <span id="investment-message-copy"></span>
+          <button id="use-full-budget" type="button">Show the full-funding portfolio</button>
+        </div>
       </section>
 
       <details class="assumption-panel">
-        <summary><span><strong>Model settings</strong><small id="settings-summary">Permanent P50 · maximise net benefit</small></span><span aria-hidden="true">⌄</span></summary>
+        <summary><span><strong>Model settings</strong><small id="settings-summary">Permanent P50 · use available funding</small></span><span aria-hidden="true">⌄</span></summary>
         <section class="control-section option-grid">
           <fieldset>
             <legend>Delivery assumption</legend>
@@ -62,12 +67,12 @@
           <fieldset>
             <legend>Allocation rule</legend>
             <label class="radio-card">
-              <input type="radio" name="objective" value="net" checked>
-              <span><strong>Maximise net benefit</strong><small>May leave funding unspent</small></span>
+              <input type="radio" name="objective" value="benefit" checked>
+              <span><strong>Use available funding</strong><small>Select the strongest program within the funding limit</small></span>
             </label>
             <label class="radio-card">
-              <input type="radio" name="objective" value="benefit">
-              <span><strong>Maximise benefits</strong><small>Extends program to the funding limit</small></span>
+              <input type="radio" name="objective" value="net">
+              <span><strong>Find preferred scale</strong><small>Stops when further investment lowers risk-adjusted net benefit</small></span>
             </label>
           </fieldset>
         </section>
@@ -80,6 +85,10 @@
         <div class="metric"><span>Benefit–cost ratio</span><strong id="metric-bcr">—</strong><small id="metric-bcr-note">Not applicable at $0</small></div>
         <div class="metric"><span>Program</span><strong id="metric-length">0 km</strong><small id="metric-projects">0 projects</small></div>
         <div class="metric"><span>CO₂ avoided</span><strong id="metric-co2">0 t/yr</strong><small>modelled travel response</small></div>
+      </section>
+      <section class="treatment-mix" aria-live="polite">
+        <div><i class="mix-swatch upgrade"></i><span>Convert current corridor to protected</span><strong id="metric-upgrade-km">0 km</strong></div>
+        <div><i class="mix-swatch new-link"></i><span>Build where no facility is mapped</span><strong id="metric-new-km">0 km</strong></div>
       </section>
 
       <section class="control-section interpretation-section">
@@ -101,8 +110,8 @@
       <div id="map"></div>
       <div class="map-key" aria-label="Map legend">
         <strong>Selected investment</strong>
-        <span><i class="line-swatch upgrade"></i>Upgrade to protected</span>
-        <span><i class="line-swatch new-link"></i>New protected link</span>
+        <span><i class="line-swatch upgrade"></i>Convert current corridor to protected</span>
+        <span><i class="line-swatch new-link"></i>Build where no facility is mapped</span>
         <span><i class="line-swatch existing"></i>Existing protected / off-road</span>
         <span><i class="line-swatch painted"></i>Existing painted lane</span>
         <span><i class="line-swatch scc"></i>Strategic Cycling Corridor</span>
@@ -130,7 +139,8 @@
       </section>
       <section>
         <h3>What the dashboard represents</h3>
-        <p>Each point is a solved portfolio from a trip-based optimisation model. Benefits are out-of-sample 30-year present values in 2025 Australian dollars. The net-benefit rule can stop spending when additional projects no longer add expected value; the benefit-maximising rule uses the funding ceiling to explore larger programs.</p>
+        <p>Each point is a solved portfolio from a trip-based optimisation model. Benefits are out-of-sample 30-year present values in 2025 Australian dollars. “Use available funding” explores the strongest program within each funding ceiling. “Find preferred scale” can stop spending when additional projects reduce the risk-adjusted net value.</p>
+        <p>The portfolios are best-found solutions with valid but loose global bounds; they are not proven global optima. Funding levels are optimised independently and should not be interpreted as a staged construction sequence.</p>
       </section>
       <section class="caution-box">
         <h3>Important limitation</h3>
@@ -141,6 +151,6 @@
   </dialog>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

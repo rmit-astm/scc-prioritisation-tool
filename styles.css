@@ -29,6 +29,11 @@ input[type="range"] { width: 100%; margin: 19px 0 2px; accent-color: var(--brand
 .budget-presets button:hover, .budget-presets button:focus-visible { border-color: var(--brand); color: var(--brand); outline: none; }
 .budget-presets button.active { color: white; background: var(--brand); border-color: var(--brand); }
 .control-help { margin: 7px 0 0; color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+.investment-message { margin-top: 11px; padding: 10px 11px; display: grid; gap: 4px; color: #614918; background: #f6f0df; border: 1px solid #d8c48e; border-left: 3px solid #a77b2b; border-radius: 3px; }
+.investment-message[hidden] { display: none; }
+.investment-message strong { font-size: 12px; }
+.investment-message span { font-size: 11px; line-height: 1.35; }
+.investment-message button { width: fit-content; margin-top: 3px; padding: 4px 0; color: var(--brand); background: transparent; border: 0; font-size: 11px; font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .assumption-panel { border-bottom: 1px solid var(--line); background: #fbfcfb; }
 .assumption-panel summary { padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--brand); cursor: pointer; list-style: none; }
 .assumption-panel summary::-webkit-details-marker { display: none; }
@@ -53,6 +58,12 @@ fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
 .metric small { color: var(--muted); font-size: 10.5px; line-height: 1.2; }
 .metric.negative strong { color: #a12939; }
 .metric.positive strong { color: var(--brand); }
+.treatment-mix { padding: 11px 15px; display: grid; gap: 7px; background: #f8faf8; border-bottom: 1px solid var(--line); }
+.treatment-mix > div { display: grid; grid-template-columns: 13px 1fr auto; align-items: center; gap: 7px; font-size: 11px; }
+.treatment-mix strong { font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.mix-swatch { width: 10px; height: 10px; display: inline-block; border-radius: 2px; }
+.mix-swatch.upgrade { background: var(--upgrade); }
+.mix-swatch.new-link { background: var(--new); }
 .interpretation-section h2, .project-section h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 17px; font-weight: 600; }
 .interpretation-section p { margin: 7px 0 11px; color: #384641; font-size: 12.5px; line-height: 1.46; }
 #return-chart { width: 100%; display: block; background: #fbfcfb; border: 1px solid #e2e7e4; }

@@ -6,11 +6,11 @@ const DATA_FILES = {
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
-const DATA_VERSION = "2026-08-24-2";
+const DATA_VERSION = "2026-08-24-3";
 const colours = { upgrade: "#1769aa", newLink: "#b74352", existing: "#3d7c5b", painted: "#c38b20", scc: "#707a76", candidate: "#827f78", brand: "#174f45" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
-  budgets: [], scenario: "p50", objective: "net", budgetIndex: 0,
+  budgets: [], scenario: "p50", objective: "benefit", budgetIndex: 0,
   selectedLayer: null, selectedBounds: null
 };
 
@@ -47,7 +47,7 @@ function projectStyle(feature, selected = false) {
 
 function selectedPopup(feature, selectedMeta) {
   const p = feature.properties;
-  const type = p.status === "upgrade_candidate" ? "Upgrade to protected" : "New protected link";
+  const type = p.status === "upgrade_candidate" ? "Convert current corridor to protected" : "Build where no facility is mapped";
   return `<h3 class="popup-title">${p.project_id}</h3>
     <div class="popup-grid">
       <span>Portfolio rank</span><strong>${selectedMeta.rank}</strong>
@@ -114,7 +114,7 @@ function renderProjectList(p) {
     const feature = state.projectById.get(meta.project_id);
     if (!feature) return;
     const props = feature.properties;
-    const treatment = props.status === "upgrade_candidate" ? "Upgrade" : "New link";
+    const treatment = props.status === "upgrade_candidate" ? "Convert to protected" : "No mapped facility";
     const button = document.createElement("button");
     button.type = "button";
     button.className = "project-row";
@@ -162,7 +162,7 @@ function render() {
   if (!p) return;
   document.getElementById("budget-output").textContent = p.budget_aud_m === 0 ? "$0 · today" : `${formatMoney(p.budget_aud_m, p.budget_aud_m < 1 ? 2 : 0)} available`;
   document.getElementById("spend-status").textContent = p.budget_aud_m === 0 ? "Current network" : (p.budget_binding ? "Funding used" : "Funding left unspent");
-  document.getElementById("settings-summary").textContent = `${state.scenario === "p50" ? "Permanent P50" : "Low complexity"} · ${state.objective === "net" ? "maximise net benefit" : "maximise benefits"}`;
+  document.getElementById("settings-summary").textContent = `${state.scenario === "p50" ? "Permanent P50" : "Low complexity"} · ${state.objective === "net" ? "find preferred scale" : "use available funding"}`;
   document.querySelectorAll(".budget-presets button").forEach(button => button.classList.toggle("active", Number(button.dataset.budget) === p.budget_aud_m));
   setMetric("metric-benefit", formatMoney(p.expected_benefit_aud_m, 1), p.expected_benefit_aud_m > 0 ? "positive" : "");
   setMetric("metric-spend", formatMoney(p.spend_aud_m, 1));
@@ -173,6 +173,15 @@ function render() {
   setMetric("metric-length", `${formatNumber(p.length_km, 1)} km`);
   document.getElementById("metric-projects").textContent = `${p.n_projects} ${p.n_projects === 1 ? "project" : "projects"}`;
   setMetric("metric-co2", `${formatNumber(p.avoided_co2_tonnes_per_year, 1)} t/yr`);
+  document.getElementById("metric-upgrade-km").textContent = `${formatNumber(p.upgrade_km, 1)} km`;
+  document.getElementById("metric-new-km").textContent = `${formatNumber(p.new_km, 1)} km`;
+  const investmentMessage = document.getElementById("investment-message");
+  const preferredScaleStops = state.objective === "net" && p.budget_aud_m > 0 && !p.budget_binding && p.unspent_aud_m > .02;
+  investmentMessage.hidden = !preferredScaleStops;
+  if (preferredScaleStops) {
+    document.getElementById("investment-message-title").textContent = `The model invests ${formatMoney(p.spend_aud_m, 2)} of the ${formatMoney(p.budget_aud_m, 0)} available.`;
+    document.getElementById("investment-message-copy").textContent = `${formatMoney(p.unspent_aud_m, 1)} is left unspent, so the selected map does not expand above this preferred scale.`;
+  }
   document.getElementById("interpretation").textContent = interpretationFor(p);
   updateSelectedLayer(p); renderProjectList(p); drawReturnChart(p);
 }
@@ -190,6 +199,11 @@ function initialiseControls() {
   }));
   document.querySelectorAll('input[name="scenario"]').forEach(input => input.addEventListener("change", event => { state.scenario = event.target.value; render(); }));
   document.querySelectorAll('input[name="objective"]').forEach(input => input.addEventListener("change", event => { state.objective = event.target.value; render(); }));
+  document.getElementById("use-full-budget").addEventListener("click", () => {
+    state.objective = "benefit";
+    document.querySelector('input[name="objective"][value="benefit"]').checked = true;
+    render();
+  });
   document.getElementById("zoom-selected").addEventListener("click", () => { if (state.selectedBounds) map.fitBounds(state.selectedBounds, { padding: [35, 35], maxZoom: 14 }); });
   let resizeTimer;
   window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { map.invalidateSize(); drawReturnChart(getPortfolio()); }, 100); });
