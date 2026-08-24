@@ -26,3 +26,13 @@ Open `http://localhost:8080`.
 ## Interpretation
 
 This is a research prototype for testing whether the spatial priorities and funding response appear sensible. The displayed portfolios are model outputs, not funded projects, detailed designs or delivery recommendations. See the dashboard's “About the evidence” panel for the main limitations.
+
+## Practitioner assumptions review
+
+`review.html` provides a structured, no-backend expert review of model
+assumptions and candidate corridors. Responses are saved only in the
+reviewer's browser using local storage. Reviewers can download JSON or CSV,
+copy an email summary, prepare an email to the corresponding author, or print
+the review. Changing a suggested value does not recalculate the optimisation;
+accepted corrections must be incorporated into the source configuration and
+the model rerun.

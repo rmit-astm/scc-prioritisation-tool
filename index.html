@@ -9,7 +9,7 @@
   <title>Melbourne SCC investment explorer</title>
   <link rel="preconnect" href="https://basemaps.cartocdn.com">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <header class="site-header">
@@ -18,7 +18,13 @@
       <h1>Strategic Cycling Corridor investment explorer</h1>
       <p class="header-copy">Test where protected cycling investment is selected, how far a program expands, and how estimated returns change with available funding.</p>
     </div>
-    <button class="about-button" id="about-open" type="button">About the evidence</button>
+    <div class="header-actions">
+      <nav class="site-nav" aria-label="Dashboard sections">
+        <a class="active" href="index.html">Investment explorer</a>
+        <a href="review.html">Assumptions review</a>
+      </nav>
+      <button class="about-button" id="about-open" type="button">About the evidence</button>
+    </div>
   </header>
 
   <main class="dashboard-shell">
@@ -151,6 +157,6 @@
   </dialog>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

@@ -1,0 +1,203 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-25T09:01:47+1000",
+    "version": "1.0",
+    "response_storage": "Responses remain in the reviewer's browser until exported.",
+    "review_statuses": ["reasonable", "uncertain", "revise", "not_my_expertise"]
+  },
+  "assumptions": [
+    {
+      "id": "cost_new",
+      "category": "Delivery costs",
+      "title": "New protected on-road infrastructure",
+      "current_value": "P50 $1.00M/km; low $0.50M/km; high $1.50M/km",
+      "basis": "Published benchmark with modelled application",
+      "source": "Infrastructure Victoria / Trafficworks Priority Cycling Corridor Investment Analysis (July 2025)",
+      "explanation": "Applied to missing, unverified and partial facilities. Major intersections, bridges, crossings and lighting are excluded from the kilometre rate.",
+      "observed_effect": "For the fixed 100 km portfolio, BCR is 0.72 under P50 and 1.79 under the low-complexity cost bound.",
+      "review_question": "Are these kilometre rates and exclusions credible for Melbourne SCC delivery, and where would site complexity materially change them?"
+    },
+    {
+      "id": "cost_upgrade",
+      "category": "Delivery costs",
+      "title": "Conversion of a painted or inadequate facility to protected",
+      "current_value": "P50 $0.45M/km; low $0.05M/km; high $0.585M/km",
+      "basis": "Published central/low benchmark; high is a derived +30% case",
+      "source": "Infrastructure Victoria / Trafficworks; high upgrade value derived in this study",
+      "explanation": "The low case represents uncomplicated protected retrofit or road-space reallocation, not a painted-lane treatment.",
+      "observed_effect": "Lower upgrade cost causes early portfolios to be dominated by conversions of existing painted or inadequate corridors.",
+      "review_question": "Which mapped upgrade candidates could genuinely be protected at the low, P50 or high rate?"
+    },
+    {
+      "id": "cost_lifecycle",
+      "category": "Delivery costs",
+      "title": "Maintenance, renewal and asset lives",
+      "current_value": "O&M $7,500/km/year (new) and $7,000/km/year (upgrade); lives 25/15 years; 100% renewal",
+      "basis": "Published O&M/lives plus conservative modelled renewal",
+      "source": "Victorian cost study for O&M and lives; renewal treatment is a study assumption",
+      "explanation": "The appraisal uses like-for-like full-cost renewal, residual value at year 30, and a 10% program-management allowance.",
+      "observed_effect": "Removing renewal entirely raises the fixed-network BCR only from 0.72 to 0.84.",
+      "review_question": "Are the asset lives, annual maintenance, renewal fraction and program-management allowance consistent with agency experience?"
+    },
+    {
+      "id": "network_status",
+      "category": "Network representation",
+      "title": "Existing, upgrade and missing SCC classification",
+      "current_value": "missing or unverified 59.5%; protected existing 26.9%; upgrade candidate 13.6%",
+      "basis": "Spatial reconciliation of SCC chainage and MATSim/OSM-derived facility attributes",
+      "source": "2020 Strategic Cycling Corridors, MATSim network attributes and SCC reconciliation audit",
+      "explanation": "Protected status takes precedence over upgrade and missing representations at the same SCC chainage. Parallel-link conflicts are constrained to avoid duplicate investment.",
+      "observed_effect": "Status reconciliation reduced the candidate pool and removed redundant selections; remaining classifications have not been checked against a complete as-built inventory.",
+      "review_question": "Do these shares and mapped statuses resemble the current network, and which corridors are already protected, committed or misclassified?"
+    },
+    {
+      "id": "project_definition",
+      "category": "Network representation",
+      "title": "Definition of a completed intervention",
+      "current_value": "Every selected project becomes protected or off-road infrastructure",
+      "basis": "Study design choice",
+      "source": "Protected-cycling intervention definition used throughout the optimisation",
+      "explanation": "A painted or inadequate lane selected for investment is treated as conversion to separation; missing links receive new protected infrastructure.",
+      "observed_effect": "This prevents a favourable low cost from being interpreted as delivery of another painted lane.",
+      "review_question": "Is protection the appropriate minimum treatment, and are there corridors where another treatment should be considered?"
+    },
+    {
+      "id": "lts_rules",
+      "category": "Network representation",
+      "title": "Level-of-traffic-stress classification",
+      "current_value": "Link LTS derived from speed, road type, lanes, traffic and facility attributes",
+      "basis": "Transferred published rules implemented in the companion cycling-safety code",
+      "source": "Pemberton/Jafari LTS calculation applied to the MATSim network",
+      "explanation": "Candidate exposure is the high-stress length encountered on the reconstructed bicycle route.",
+      "observed_effect": "Project benefits depend directly on which links are classified LTS 3 or 4 before treatment.",
+      "review_question": "Are the mapped stress classifications plausible, particularly on arterials, shared paths and low-speed streets?"
+    },
+    {
+      "id": "cycle_distance",
+      "category": "Behaviour and routing",
+      "title": "Maximum substitutable car-trip distance",
+      "current_value": "12 km",
+      "basis": "Study eligibility rule",
+      "source": "Behavioural-response configuration",
+      "explanation": "Only simulated car trips at or below this threshold can divert to cycling.",
+      "observed_effect": "The threshold defines the eligible trip population before any project is evaluated.",
+      "review_question": "Is 12 km a reasonable metropolitan screening threshold, and should e-bike and conventional-bike markets be separated?"
+    },
+    {
+      "id": "mode_response",
+      "category": "Behaviour and routing",
+      "title": "Response to reduced high-stress exposure",
+      "current_value": "Central coefficient -0.768; standard deviation 0.164",
+      "basis": "Transferred Melbourne mode-choice estimate",
+      "source": "Melbourne VISTA multinomial mode-choice model; independent estimate of -0.754 used as a cross-check",
+      "explanation": "The coefficient is applied as a binary pivot conditional on an observed simulated car trip, rather than as a newly estimated intervention model.",
+      "observed_effect": "Uncertainty in this coefficient is propagated through the scenario draws and risk-adjusted portfolio objective.",
+      "review_question": "Does the implied uptake appear credible for protected-corridor interventions, and what local before-after evidence should be used to calibrate it?"
+    },
+    {
+      "id": "uptake_uncertainty",
+      "category": "Behaviour and routing",
+      "title": "Program-wide uptake uncertainty",
+      "current_value": "Lognormal adoption uncertainty, sigma 0.25",
+      "basis": "Study uncertainty assumption",
+      "source": "Behavioural-response configuration",
+      "explanation": "The same scenario-level uptake multiplier affects all trips in a draw, representing common uncertainty in realised adoption.",
+      "observed_effect": "The best-found preferred program changes from $21.4M at lambda 0 to $9.2M at lambda 0.25 and $5.6M at lambda 0.5.",
+      "review_question": "Is this range of program-wide uptake uncertainty credible, and are there important corridor-specific uncertainties missing?"
+    },
+    {
+      "id": "bike_routes",
+      "category": "Behaviour and routing",
+      "title": "Bicycle-route impedance",
+      "current_value": "Bendigo route-choice coefficients; protected 0.716, painted 1.221, low-speed 0.942, steep slope -0.477 per km",
+      "basis": "Transferred empirical route-choice model",
+      "source": "Bendigo PSL route-choice model (PPGIS, n = 258 routes), companion manuscript",
+      "explanation": "Coefficients estimated from 258 mapped routes of current cyclists in Greater Bendigo are converted to link impedances for Melbourne route reconstruction.",
+      "observed_effect": "Alternative routing specifications retain 78–100% of the central selected project set, while program length and benefit vary more.",
+      "review_question": "Are these route preferences transferable to prospective Melbourne cyclists, and which route conditions are missing?"
+    },
+    {
+      "id": "appraisal_frame",
+      "category": "Economic appraisal",
+      "title": "Appraisal period and discount rate",
+      "current_value": "30 years; 7% real discount rate; sensitivities 4% and 10%",
+      "basis": "Australian appraisal convention",
+      "source": "ATAP framework and study configuration",
+      "explanation": "Benefits, maintenance, renewal and residual value are discounted over the same appraisal period.",
+      "observed_effect": "Discount-rate sensitivities are reported separately rather than used to tune the central BCR.",
+      "review_question": "Is this appraisal frame appropriate for current Victorian cycling investment decisions?"
+    },
+    {
+      "id": "active_travel_values",
+      "category": "Economic appraisal",
+      "title": "Health, safety, decongestion and vehicle-cost values",
+      "current_value": "Health system $0.72/km; private health $1.48/km; safety $1.31/km x 40% risk reduction x treated share; decongestion $0.60/km; VOC $0.18/km",
+      "basis": "ATAP/Fastrack values with study-specific application",
+      "source": "Australian Transport Assessment and Planning active-travel guidance",
+      "explanation": "Private health and safety use the rule of half; safety is additionally weighted by the trip's actual treated route share.",
+      "observed_effect": "Health and decongestion account for most monetised benefit; emission damage remains a relatively small component.",
+      "review_question": "Are these values and their application consistent with current agency appraisal practice?"
+    },
+    {
+      "id": "simulation_expansion",
+      "category": "Economic appraisal",
+      "title": "Expansion from the simulation sample",
+      "current_value": "10% population sample expanded x10; modelled day annualised by 230 days",
+      "basis": "Simulation and annualisation assumption",
+      "source": "AToM baseline design and appraisal configuration",
+      "explanation": "Trip outcomes from the calibrated 10% AToM run are expanded to metropolitan annual totals.",
+      "observed_effect": "The multiplier scales all trip-based benefits and physical emission changes.",
+      "review_question": "Are the sample expansion and 230-day annualisation appropriate for commuting and non-commuting cycling benefits?"
+    },
+    {
+      "id": "risk_objective",
+      "category": "Decision rule",
+      "title": "Downside-risk preference",
+      "current_value": "Central lambda 0.25; lower-tail CVaR alpha 0.10",
+      "basis": "Study decision preference, not an estimated behavioural parameter",
+      "source": "Risk-adjusted portfolio specification",
+      "explanation": "The objective blends expected benefit with the mean of the weakest 10% of uptake scenarios, then subtracts certain delivery cost in preferred-scale mode.",
+      "observed_effect": "Risk-neutral: $21.4M, 26.1 km, BCR 1.33; central: $9.2M, 10.9 km, BCR 1.69; lambda 0.5: $5.6M, 7.3 km, BCR 2.00.",
+      "review_question": "How should weak-uptake outcomes influence program size, and is lambda 0.25 a useful decision case?"
+    },
+    {
+      "id": "funding_rule",
+      "category": "Decision rule",
+      "title": "Funding ceiling versus spending target",
+      "current_value": "Two reported views: use available funding, or find the risk-adjusted preferred scale",
+      "basis": "Study design choice",
+      "source": "Budget-frontier and direct net-benefit formulations",
+      "explanation": "The full-funding view identifies the strongest portfolio under each ceiling; preferred-scale mode may leave funds unspent.",
+      "observed_effect": "Under P50 costs and lambda 0.25, the best-found preferred program spends about $9.16M; larger full-funding portfolios continue to add benefits but eventually reduce net value.",
+      "review_question": "In practice, should the cycling allocation be treated as fixed, contestable, or an upper ceiling that can be returned or redirected?"
+    },
+    {
+      "id": "scope_omissions",
+      "category": "Scope and omitted effects",
+      "title": "Benefits not represented",
+      "current_value": "Existing cyclists, new/generated trips, shifts from public transport or walking, safety-in-numbers, equity and land-use accessibility are outside the quantified objective",
+      "basis": "Transparent model boundary",
+      "source": "Study scope and available data",
+      "explanation": "The response model counts existing car trips that switch when their potential bicycle route becomes less stressful.",
+      "observed_effect": "Omitted benefits may particularly affect larger connected networks, but no unmeasured uplift is added to the BCR.",
+      "review_question": "Which omitted outcomes are material enough to change project priorities, and what defensible data could quantify them?"
+    },
+    {
+      "id": "fixed_destinations",
+      "category": "Scope and omitted effects",
+      "title": "Fixed origins and destinations",
+      "current_value": "Current AToM trip origins, destinations and activity locations are held fixed",
+      "basis": "Model boundary",
+      "source": "AToM baseline replay and one-shot infrastructure response",
+      "explanation": "The model improves route quality for the current pattern of activities; it does not create nearby destinations or represent long-run land-use change.",
+      "observed_effect": "This may limit cycling uptake where otherwise rideable areas lack accessible everyday destinations.",
+      "review_question": "Where should cycling infrastructure be considered jointly with activity centres, schools, stations or other destination planning?"
+    }
+  ],
+  "corridor_questions": {
+    "status_options": ["correct", "incorrect", "uncertain"],
+    "feasibility_options": ["straightforward", "complex", "not_feasible", "uncertain"],
+    "delivery_status_options": ["not_built", "already_built", "funded_or_planned", "unknown"],
+    "cost_options": ["low", "p50", "high", "site_specific_estimate_needed"]
+  }
+}

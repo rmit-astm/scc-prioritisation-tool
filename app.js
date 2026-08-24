@@ -57,7 +57,8 @@ function selectedPopup(feature, selectedMeta) {
       <span>PV project cost</span><strong>${formatMoney(selectedMeta.pv_cost_aud_m, 2)}</strong>
       <span>Standalone BCR</span><strong>${formatNumber(selectedMeta.singleton_bcr, 2)}</strong>
     </div>
-    <p class="popup-note">The standalone value does not include interactions with other selected projects and should not be summed across the portfolio.</p>`;
+    <p class="popup-note">The standalone value does not include interactions with other selected projects and should not be summed across the portfolio.</p>
+    <a class="popup-review-link" href="review.html?project=${encodeURIComponent(p.project_id)}">Review this project’s assumptions</a>`;
 }
 
 function setMetric(id, value, className = "") {

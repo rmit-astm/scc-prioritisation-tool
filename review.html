@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Structured practitioner review of the assumptions used in the Melbourne Strategic Cycling Corridor prioritisation model.">
+  <title>Assumptions review · Melbourne SCC investment explorer</title>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="review.css?v=1">
+</head>
+<body class="review-page">
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">Practitioner review · Greater Melbourne</p>
+      <h1>Assumptions and corridor review</h1>
+      <p class="header-copy">Review the evidence, parameter choices and mapped corridor conditions underlying the prioritisation results.</p>
+    </div>
+    <div class="header-actions">
+      <nav class="site-nav" aria-label="Dashboard sections">
+        <a href="index.html">Investment explorer</a>
+        <a class="active" href="review.html">Assumptions review</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="review-layout">
+    <aside class="review-sidebar">
+      <div class="review-intro">
+        <p class="eyebrow dark">No-backend review</p>
+        <h2>Your responses stay on this device</h2>
+        <p>Nothing is uploaded. Responses save automatically in this browser until you download, copy or email the review.</p>
+        <span id="save-status" class="save-status">Preparing review…</span>
+      </div>
+
+      <section class="reviewer-card">
+        <h3>Reviewer details <small>optional</small></h3>
+        <label>Name<input id="reviewer-name" type="text" autocomplete="name"></label>
+        <label>Organisation or team<input id="reviewer-organisation" type="text" autocomplete="organization"></label>
+        <label>Role or area of expertise<input id="reviewer-role" type="text"></label>
+      </section>
+
+      <section class="progress-card" aria-live="polite">
+        <h3>Review progress</h3>
+        <div><strong id="progress-reviewed">0</strong><span>assumptions reviewed</span></div>
+        <div><strong id="progress-flagged">0</strong><span>flagged for revision</span></div>
+        <div><strong id="progress-corridors">0</strong><span>corridors reviewed</span></div>
+      </section>
+
+      <nav class="review-nav" id="review-nav" aria-label="Assumption categories"></nav>
+
+      <section class="export-card">
+        <h3>Return your review</h3>
+        <button id="email-review" class="primary-action" type="button">Prepare email to Afshin</button>
+        <button id="copy-review" type="button">Copy email summary</button>
+        <button id="download-json" type="button">Download complete review</button>
+        <button id="download-csv" type="button">Download review table</button>
+        <button id="print-review" type="button">Print / save as PDF</button>
+        <p>For a detailed review, attach the downloaded JSON or CSV file to the prepared email.</p>
+      </section>
+
+      <button id="clear-review" class="clear-action" type="button">Clear responses on this device</button>
+    </aside>
+
+    <div class="review-main">
+      <section class="review-hero">
+        <div>
+          <p class="eyebrow dark">Purpose</p>
+          <h2>This is an expert review of the model inputs—not a request to endorse its results</h2>
+          <p>Please focus on assumptions within your area of expertise. “Not my expertise” is a useful response. Suggested values are recorded for a later model rerun; changing a field here does not recalculate the optimisation.</p>
+        </div>
+        <div class="review-principles">
+          <span><strong>1</strong> Check the current value</span>
+          <span><strong>2</strong> Consider its source and consequence</span>
+          <span><strong>3</strong> Record corrections or missing evidence</span>
+        </div>
+      </section>
+
+      <section class="general-comments">
+        <label for="overall-comments"><strong>Overall comments</strong><span>What is the most important assumption, omission or practical constraint for us to revisit?</span></label>
+        <textarea id="overall-comments" rows="3" placeholder="Optional overall comments…"></textarea>
+      </section>
+
+      <div id="assumption-sections" class="assumption-sections">
+        <div class="review-loading">Loading the model assumption register…</div>
+      </div>
+
+      <section id="corridor-review" class="corridor-review-section">
+        <div class="section-title">
+          <p class="eyebrow dark">Spatial data check</p>
+          <h2>Review a candidate corridor project</h2>
+          <p>Use the investment map to identify a project, or search by project ID here. Corridor comments are stored separately from the general assumptions.</p>
+        </div>
+
+        <div class="corridor-form-grid">
+          <div class="corridor-picker">
+            <label for="project-search">Project ID</label>
+            <input id="project-search" type="search" list="project-options" placeholder="e.g. SCC_01276" autocomplete="off">
+            <datalist id="project-options"></datalist>
+            <div id="project-summary" class="project-summary empty">Select a project to see its modelled status and length.</div>
+          </div>
+          <div class="corridor-fields">
+            <label>Is the mapped existing status correct?
+              <select id="corridor-status">
+                <option value="">Select…</option><option value="correct">Correct</option><option value="incorrect">Incorrect</option><option value="uncertain">Uncertain</option>
+              </select>
+            </label>
+            <label>Protected-treatment feasibility
+              <select id="corridor-feasibility">
+                <option value="">Select…</option><option value="straightforward">Straightforward</option><option value="complex">Complex</option><option value="not_feasible">Not feasible as represented</option><option value="uncertain">Uncertain</option>
+              </select>
+            </label>
+            <label>Current delivery status
+              <select id="corridor-delivery">
+                <option value="">Select…</option><option value="not_built">Not built</option><option value="already_built">Already built</option><option value="funded_or_planned">Funded or planned</option><option value="unknown">Unknown</option>
+              </select>
+            </label>
+            <label>Most plausible cost treatment
+              <select id="corridor-cost">
+                <option value="">Select…</option><option value="low">Low complexity</option><option value="p50">P50</option><option value="high">High complexity</option><option value="site_specific_estimate_needed">Site-specific estimate needed</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <label class="corridor-comment">Corridor evidence or comments
+          <textarea id="corridor-comment" rows="3" placeholder="Existing facility, planned works, physical constraints, intersections, likely treatment or supporting source…"></textarea>
+        </label>
+        <button id="save-corridor" class="primary-action inline" type="button" disabled>Save corridor review</button>
+        <div id="corridor-list" class="corridor-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="review.js?v=1"></script>
+</body>
+</html>
