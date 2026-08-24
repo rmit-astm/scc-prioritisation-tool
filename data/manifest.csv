@@ -1,0 +1,5 @@
+"file","source","bytes"
+"dashboard_data.json","results/frontier and per-run portfolio outputs",278053
+"scc_network.geojson","data/2020_Strategic_Cycling_Corridors_(SCC)/2020_Strategic_Cycling_Corridors_(SCC).shp",1652954
+"existing_bicycle_facilities.geojson","data/processed/matsim_network.rds",1589494
+"candidate_projects.geojson","data/processed/scc_projects.gpkg",1030600

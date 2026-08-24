@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore modelled protected-cycling investments on Melbourne's Strategic Cycling Corridor network at different funding levels.">
+  <meta property="og:title" content="Melbourne SCC investment explorer">
+  <meta property="og:description" content="An interactive research prototype for reviewing the location, scale and estimated returns of protected-cycling investment.">
+  <title>Melbourne SCC investment explorer</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://basemaps.cartocdn.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynhMZJOZEKtnkRZ9AZ1Cj1S6Yh7U=" crossorigin="">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">Research prototype · Greater Melbourne</p>
+      <h1>Strategic Cycling Corridor investment explorer</h1>
+      <p class="header-copy">Test where protected cycling investment is selected, how far a program expands, and how estimated returns change with available funding.</p>
+    </div>
+    <button class="about-button" id="about-open" type="button">About the evidence</button>
+  </header>
+
+  <main class="dashboard-shell">
+    <aside class="control-panel" aria-label="Investment settings and results">
+      <section class="control-section funding-section">
+        <div class="section-heading-row">
+          <div>
+            <p class="control-label">Available funding</p>
+            <output id="budget-output" for="budget-slider">$0 · today</output>
+          </div>
+          <span class="status-chip" id="spend-status">Current network</span>
+        </div>
+        <input id="budget-slider" type="range" min="0" max="11" value="0" step="1" aria-label="Available funding level">
+        <div class="range-ends"><span>$0</span><span>$100m</span></div>
+        <p class="control-help">The slider moves between solved funding levels; it does not interpolate new projects.</p>
+      </section>
+
+      <section class="control-section option-grid">
+        <fieldset>
+          <legend>Delivery assumption</legend>
+          <label class="radio-card">
+            <input type="radio" name="scenario" value="p50" checked>
+            <span><strong>Permanent P50</strong><small>Central benchmark costs</small></span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="scenario" value="lowcx">
+            <span><strong>Low complexity</strong><small>Optimistic protected retrofit bound</small></span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Allocation rule</legend>
+          <label class="radio-card">
+            <input type="radio" name="objective" value="net" checked>
+            <span><strong>Maximise net benefit</strong><small>May leave funding unspent</small></span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="objective" value="benefit">
+            <span><strong>Maximise benefits</strong><small>Extends program to the funding limit</small></span>
+          </label>
+        </fieldset>
+      </section>
+
+      <section class="control-section metrics-section" aria-live="polite">
+        <div class="metric"><span>Expected benefit</span><strong id="metric-benefit">$0m</strong><small>present value</small></div>
+        <div class="metric"><span>Investment</span><strong id="metric-spend">$0m</strong><small id="metric-unspent">No new investment</small></div>
+        <div class="metric"><span>Net present value</span><strong id="metric-npv">$0m</strong><small>benefit less cost</small></div>
+        <div class="metric"><span>Benefit–cost ratio</span><strong id="metric-bcr">—</strong><small id="metric-bcr-note">Not applicable at $0</small></div>
+        <div class="metric"><span>Program</span><strong id="metric-length">0 km</strong><small id="metric-projects">0 projects</small></div>
+        <div class="metric"><span>CO₂ avoided</span><strong id="metric-co2">0 t/yr</strong><small>modelled travel response</small></div>
+      </section>
+
+      <section class="control-section interpretation-section">
+        <h2>What this funding level shows</h2>
+        <p id="interpretation">At zero funding, the map shows the modelled current network and no new selected projects.</p>
+        <canvas id="return-chart" height="122" role="img" aria-label="Net present value across the tested funding levels"></canvas>
+      </section>
+
+      <section class="control-section project-section">
+        <div class="section-heading-row">
+          <div><p class="control-label">Selected projects</p><h2 id="project-list-title">No new projects</h2></div>
+          <button id="zoom-selected" class="text-button" type="button" disabled>Zoom to selected</button>
+        </div>
+        <div id="project-list" class="project-list"><p class="empty-state">Move the funding slider to view modelled investments.</p></div>
+      </section>
+    </aside>
+
+    <section class="map-panel" aria-label="Map of Strategic Cycling Corridors and selected investments">
+      <div id="map"></div>
+      <div class="map-key" aria-label="Map legend">
+        <strong>Selected investment</strong>
+        <span><i class="line-swatch upgrade"></i>Upgrade to protected</span>
+        <span><i class="line-swatch new-link"></i>New protected link</span>
+        <span><i class="line-swatch existing"></i>Existing protected / off-road</span>
+        <span><i class="line-swatch painted"></i>Existing painted lane</span>
+        <span><i class="line-swatch scc"></i>Strategic Cycling Corridor</span>
+      </div>
+      <div class="map-note">Click a selected segment for project details. Use the layer control to inspect candidate gaps and today’s facilities.</div>
+      <div id="loading" class="loading-state">Preparing map and model results…</div>
+    </section>
+  </main>
+
+  <dialog id="about-dialog">
+    <div class="dialog-head">
+      <div><p class="eyebrow">How to use this prototype</p><h2>Check whether the modelled priorities make practical sense</h2></div>
+      <button id="about-close" class="dialog-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-content">
+      <section>
+        <h3>Questions for practitioners</h3>
+        <ul>
+          <li>Are the selected gaps genuinely missing or inadequate today?</li>
+          <li>Could the proposed treatment be delivered at the assumed cost?</li>
+          <li>Are important corridors or existing facilities missing from the underlying network?</li>
+          <li>Does the order in which projects enter as funding grows look credible?</li>
+          <li>Where might intersections, bridges, parking or road-space constraints materially change delivery?</li>
+        </ul>
+      </section>
+      <section>
+        <h3>What the dashboard represents</h3>
+        <p>Each point is a solved portfolio from a trip-based optimisation model. Benefits are out-of-sample 30-year present values in 2025 Australian dollars. The net-benefit rule can stop spending when additional projects no longer add expected value; the benefit-maximising rule uses the funding ceiling to explore larger programs.</p>
+      </section>
+      <section class="caution-box">
+        <h3>Important limitation</h3>
+        <p>These are research outputs, not funded projects, engineering designs or recommendations for construction. Locations inherit uncertainty in SCC matching, current facility classification, cycling routes, uptake and project cost. The low-complexity case is an optimistic bound and is not known to be feasible at every site.</p>
+      </section>
+      <p class="data-date" id="data-date"></p>
+    </div>
+  </dialog>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
