@@ -6,8 +6,8 @@ const DATA_FILES = {
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
-const DATA_VERSION = "2026-08-24-3";
-const colours = { upgrade: "#1769aa", newLink: "#b74352", existing: "#3d7c5b", painted: "#c38b20", scc: "#707a76", candidate: "#827f78", brand: "#174f45" };
+const DATA_VERSION = "2026-08-25-4";
+const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", candidate: "#827f78", brand: "#1f6f65" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
   budgets: [], scenario: "p50", objective: "benefit", budgetIndex: 0,
@@ -48,6 +48,8 @@ function projectStyle(feature, selected = false) {
 function selectedPopup(feature, selectedMeta) {
   const p = feature.properties;
   const type = p.status === "upgrade_candidate" ? "Convert current corridor to protected" : "Build where no facility is mapped";
+  const emailSubject = encodeURIComponent(`Comment on SCC project ${p.project_id}`);
+  const emailBody = encodeURIComponent(`Project: ${p.project_id}\n\nMy comment or correction:\n`);
   return `<h3 class="popup-title">${p.project_id}</h3>
     <div class="popup-grid">
       <span>Portfolio rank</span><strong>${selectedMeta.rank}</strong>
@@ -58,7 +60,7 @@ function selectedPopup(feature, selectedMeta) {
       <span>Standalone BCR</span><strong>${formatNumber(selectedMeta.singleton_bcr, 2)}</strong>
     </div>
     <p class="popup-note">The standalone value does not include interactions with other selected projects and should not be summed across the portfolio.</p>
-    <a class="popup-review-link" href="review.html?project=${encodeURIComponent(p.project_id)}">Review this project’s assumptions</a>`;
+    <a class="popup-review-link" href="mailto:afshin.jafari@rmit.edu.au?subject=${emailSubject}&body=${emailBody}">Email a comment about this project</a>`;
 }
 
 function setMetric(id, value, className = "") {
@@ -70,7 +72,7 @@ function setMetric(id, value, className = "") {
 }
 
 function interpretationFor(p) {
-  if (p.budget_aud_m === 0) return "At zero funding, the map shows the modelled current bicycle facilities and the Strategic Cycling Corridor network. No new projects are selected.";
+  if (p.budget_aud_m === 0) return "At zero funding, the map shows the bicycle facilities represented in the model baseline and the Strategic Cycling Corridor network. No new projects are selected.";
   const value = p.npv_aud_m >= 0
     ? `estimated benefits exceed costs by ${formatMoney(p.npv_aud_m, 1)}`
     : `estimated costs exceed measured benefits by ${formatMoney(Math.abs(p.npv_aud_m), 1)}`;
@@ -149,7 +151,7 @@ function drawReturnChart(current) {
   const y = v => pad.top + (max - v) * (h - pad.top - pad.bottom) / span;
   ctx.clearRect(0, 0, w, h);
   ctx.strokeStyle = "#d8dfdb"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad.left, y(0)); ctx.lineTo(w - pad.right, y(0)); ctx.stroke();
-  ctx.fillStyle = "#66736e"; ctx.font = "10px system-ui"; ctx.textAlign = "right";
+  ctx.fillStyle = "#6c757d"; ctx.font = '10px "Segoe UI", system-ui'; ctx.textAlign = "right";
   ctx.fillText(formatMoney(max, 0), pad.left - 5, pad.top + 3); ctx.fillText(formatMoney(min, 0), pad.left - 5, h - pad.bottom + 3);
   ctx.textAlign = "left"; ctx.fillText("Available funding", pad.left, h - 7); ctx.textAlign = "right"; ctx.fillText("$100m", w - pad.right, h - 7);
   ctx.strokeStyle = colours.brand; ctx.lineWidth = 2; ctx.beginPath();
@@ -161,8 +163,8 @@ function drawReturnChart(current) {
 function render() {
   const p = getPortfolio();
   if (!p) return;
-  document.getElementById("budget-output").textContent = p.budget_aud_m === 0 ? "$0 · today" : `${formatMoney(p.budget_aud_m, p.budget_aud_m < 1 ? 2 : 0)} available`;
-  document.getElementById("spend-status").textContent = p.budget_aud_m === 0 ? "Current network" : (p.budget_binding ? "Funding used" : "Funding left unspent");
+  document.getElementById("budget-output").textContent = p.budget_aud_m === 0 ? "$0 · baseline" : `${formatMoney(p.budget_aud_m, p.budget_aud_m < 1 ? 2 : 0)} available`;
+  document.getElementById("spend-status").textContent = p.budget_aud_m === 0 ? "Model baseline" : (p.budget_binding ? "Funding used" : "Funding left unspent");
   document.getElementById("settings-summary").textContent = `${state.scenario === "p50" ? "Permanent P50" : "Low complexity"} · ${state.objective === "net" ? "find preferred scale" : "use available funding"}`;
   document.querySelectorAll(".budget-presets button").forEach(button => button.classList.toggle("active", Number(button.dataset.budget) === p.budget_aud_m));
   setMetric("metric-benefit", formatMoney(p.expected_benefit_aud_m, 1), p.expected_benefit_aud_m > 0 ? "positive" : "");

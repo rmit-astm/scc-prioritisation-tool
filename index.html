@@ -9,19 +9,18 @@
   <title>Melbourne SCC investment explorer</title>
   <link rel="preconnect" href="https://basemaps.cartocdn.com">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <header class="site-header">
     <div>
-      <p class="eyebrow">Research prototype · Greater Melbourne</p>
-      <h1>Strategic Cycling Corridor investment explorer</h1>
-      <p class="header-copy">Test where protected cycling investment is selected, how far a program expands, and how estimated returns change with available funding.</p>
+      <h1>Melbourne SCC investment explorer</h1>
+      <p class="header-copy">Protected cycling investment · Greater Melbourne · Research prototype</p>
     </div>
     <div class="header-actions">
       <nav class="site-nav" aria-label="Dashboard sections">
         <a class="active" href="index.html">Investment explorer</a>
-        <a href="review.html">Assumptions review</a>
+        <a href="review.html">Model assumptions</a>
       </nav>
       <button class="about-button" id="about-open" type="button">About the evidence</button>
     </div>
@@ -33,14 +32,14 @@
         <div class="section-heading-row">
           <div>
             <p class="control-label">Available funding</p>
-            <output id="budget-output" for="budget-slider">$0 · today</output>
+          <output id="budget-output" for="budget-slider">$0 · baseline</output>
           </div>
-          <span class="status-chip" id="spend-status">Current network</span>
+          <span class="status-chip" id="spend-status">Model baseline</span>
         </div>
         <input id="budget-slider" type="range" min="0" max="11" value="0" step="1" aria-label="Available funding level">
         <div class="range-ends"><span>$0</span><span>$100m</span></div>
         <div class="budget-presets" aria-label="Common funding levels">
-          <button type="button" data-budget="0">Today</button>
+          <button type="button" data-budget="0">Baseline</button>
           <button type="button" data-budget="5">$5m</button>
           <button type="button" data-budget="10">$10m</button>
           <button type="button" data-budget="20">$20m</button>
@@ -99,7 +98,7 @@
 
       <section class="control-section interpretation-section">
         <h2>What this funding level shows</h2>
-        <p id="interpretation">At zero funding, the map shows the modelled current network and no new selected projects.</p>
+        <p id="interpretation">At zero funding, the map shows the modelled baseline network and no new selected projects.</p>
         <canvas id="return-chart" height="122" role="img" aria-label="Net present value across the tested funding levels"></canvas>
       </section>
 
@@ -122,7 +121,7 @@
         <span><i class="line-swatch painted"></i>Existing painted lane</span>
         <span><i class="line-swatch scc"></i>Strategic Cycling Corridor</span>
       </div>
-      <div class="map-note">Click a selected segment for project details. Use the layer control to inspect candidate gaps and today’s facilities.</div>
+      <div class="map-note">Click a selected segment for project details. Use the layer control to inspect candidate gaps and facilities represented in the model baseline.</div>
       <div id="loading" class="loading-state">Preparing map and model results…</div>
     </section>
   </main>
@@ -136,7 +135,7 @@
       <section>
         <h3>Questions for practitioners</h3>
         <ul>
-          <li>Are the selected gaps genuinely missing or inadequate today?</li>
+          <li>Are the selected gaps genuinely missing or inadequate, or have they already been built or funded?</li>
           <li>Could the proposed treatment be delivered at the assumed cost?</li>
           <li>Are important corridors or existing facilities missing from the underlying network?</li>
           <li>Does the order in which projects enter as funding grows look credible?</li>
@@ -157,6 +156,6 @@
   </dialog>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

@@ -3,134 +3,105 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Structured practitioner review of the assumptions used in the Melbourne Strategic Cycling Corridor prioritisation model.">
-  <title>Assumptions review · Melbourne SCC investment explorer</title>
-  <link rel="stylesheet" href="styles.css?v=4">
-  <link rel="stylesheet" href="review.css?v=1">
+  <meta name="description" content="Plain-language assumptions used in the Melbourne Strategic Cycling Corridor prioritisation model.">
+  <title>Model assumptions · Melbourne SCC investment explorer</title>
+  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="review.css?v=2">
 </head>
 <body class="review-page">
   <header class="site-header">
     <div>
-      <p class="eyebrow">Practitioner review · Greater Melbourne</p>
-      <h1>Assumptions and corridor review</h1>
-      <p class="header-copy">Review the evidence, parameter choices and mapped corridor conditions underlying the prioritisation results.</p>
+      <h1>Melbourne SCC investment explorer</h1>
+      <p class="header-copy">Model assumptions · Greater Melbourne · Research prototype</p>
     </div>
-    <div class="header-actions">
-      <nav class="site-nav" aria-label="Dashboard sections">
-        <a href="index.html">Investment explorer</a>
-        <a class="active" href="review.html">Assumptions review</a>
-      </nav>
-    </div>
+    <nav class="site-nav" aria-label="Dashboard sections">
+      <a href="index.html">Investment explorer</a>
+      <a class="active" href="review.html">Model assumptions</a>
+    </nav>
   </header>
 
-  <main class="review-layout">
-    <aside class="review-sidebar">
-      <div class="review-intro">
-        <p class="eyebrow dark">No-backend review</p>
-        <h2>Your responses stay on this device</h2>
-        <p>Nothing is uploaded. Responses save automatically in this browser until you download, copy or email the review.</p>
-        <span id="save-status" class="save-status">Preparing review…</span>
+  <main class="assumptions-page">
+    <section class="assumptions-intro">
+      <p class="section-kicker">For practitioner review</p>
+      <h2>How the prioritisation model works</h2>
+      <p>This page summarises the main assumptions behind the map and benefit estimates. We would particularly like to know where the mapped network, likely treatment, delivery cost or practical feasibility does not match local knowledge.</p>
+      <div class="review-prompt">
+        <strong>What would be most useful to check</strong>
+        <ul>
+          <li>Is a selected corridor genuinely missing or inadequate, or has it already been built or funded?</li>
+          <li>Would protected infrastructure be feasible at the location shown?</li>
+          <li>Is the assumed treatment cost realistic once intersections, parking, drainage, bridges or utilities are considered?</li>
+          <li>Do the modelled order and scale of investment make practical sense?</li>
+        </ul>
       </div>
+      <p class="contact-line">Please email corrections, evidence or general comments to <a href="mailto:afshin.jafari@rmit.edu.au?subject=Melbourne%20SCC%20prioritisation%20feedback">afshin.jafari@rmit.edu.au</a>. Project IDs shown on the map are helpful when commenting on a location.</p>
+    </section>
 
-      <section class="reviewer-card">
-        <h3>Reviewer details <small>optional</small></h3>
-        <label>Name<input id="reviewer-name" type="text" autocomplete="name"></label>
-        <label>Organisation or team<input id="reviewer-organisation" type="text" autocomplete="organization"></label>
-        <label>Role or area of expertise<input id="reviewer-role" type="text"></label>
+    <div class="assumption-sections">
+      <section class="assumption-section">
+        <h2>Network and candidate projects</h2>
+        <ul class="assumption-list">
+          <li><strong>Strategic corridor network.</strong><span>The current results use the Victorian Government's 2020 Strategic Cycling Corridor geometry. We are obtaining the latest SCC layer and will update the analysis when it is available.</span></li>
+          <li><strong>Existing infrastructure.</strong><span>Facility status is currently derived from cycling attributes in the MATSim network and spatially reconciled along each SCC. A July 2026 OSM-based refresh is being prepared, so the present map should be treated as a modelled baseline rather than a definitive as-built inventory.</span></li>
+          <li><strong>Protected is the delivery standard.</strong><span>Separated lanes and off-road paths count as already delivered. Painted lanes and other inadequate facilities are candidates for conversion to protection; locations with no mapped facility are candidates for new protected infrastructure.</span></li>
+          <li><strong>Traffic stress.</strong><span>Level of traffic stress is derived from facility type, road class, speed and modelled traffic. Investment removes the treated corridor's high-stress exposure.</span></li>
+        </ul>
       </section>
 
-      <section class="progress-card" aria-live="polite">
-        <h3>Review progress</h3>
-        <div><strong id="progress-reviewed">0</strong><span>assumptions reviewed</span></div>
-        <div><strong id="progress-flagged">0</strong><span>flagged for revision</span></div>
-        <div><strong id="progress-corridors">0</strong><span>corridors reviewed</span></div>
+      <section class="assumption-section">
+        <h2>Delivery costs</h2>
+        <ul class="assumption-list">
+          <li><strong>Permanent P50 case.</strong><span>New protected infrastructure costs $1.00 million/km and conversion of an inadequate facility costs $0.45 million/km.</span></li>
+          <li><strong>Low-complexity case.</strong><span>New infrastructure costs $0.50 million/km and a straightforward protected retrofit costs $0.05 million/km. This is an optimistic bound, not an assumption that every corridor can be delivered cheaply.</span></li>
+          <li><strong>Lifecycle costs.</strong><span>The appraisal includes annual maintenance, renewal, residual value and a 10% programme-management allowance over 30 years.</span></li>
+          <li><strong>Site complexity is not mapped.</strong><span>The kilometre rates do not identify major intersection works, bridges, drainage, lighting, utility relocation, parking removal or other location-specific constraints.</span></li>
+        </ul>
       </section>
 
-      <nav class="review-nav" id="review-nav" aria-label="Assumption categories"></nav>
-
-      <section class="export-card">
-        <h3>Return your review</h3>
-        <button id="email-review" class="primary-action" type="button">Prepare email to Afshin</button>
-        <button id="copy-review" type="button">Copy email summary</button>
-        <button id="download-json" type="button">Download complete review</button>
-        <button id="download-csv" type="button">Download review table</button>
-        <button id="print-review" type="button">Print / save as PDF</button>
-        <p>For a detailed review, attach the downloaded JSON or CSV file to the prepared email.</p>
+      <section class="assumption-section">
+        <h2>Travel behaviour and bicycle routes</h2>
+        <ul class="assumption-list">
+          <li><strong>Eligible trips.</strong><span>Only existing simulated car trips of 12 km or less can switch to bicycle. Public transport and walking trips are not reassigned.</span></li>
+          <li><strong>Response to lower traffic stress.</strong><span>The probability of switching is based on a Melbourne mode-choice estimate linking bicycle uptake to the share of a potential route exposed to high traffic stress. Parameter uncertainty is carried into the optimisation.</span></li>
+          <li><strong>Bicycle route choice.</strong><span>Potential routes use empirically estimated preferences for distance, protected and painted facilities, low-speed streets and slope. The route-choice coefficients come from Greater Bendigo and are tested through alternative specifications.</span></li>
+          <li><strong>Fixed activities.</strong><span>Origins, destinations and activity locations remain those in the AToM baseline. The model does not represent new destinations or long-run land-use change.</span></li>
+        </ul>
       </section>
 
-      <button id="clear-review" class="clear-action" type="button">Clear responses on this device</button>
-    </aside>
-
-    <div class="review-main">
-      <section class="review-hero">
-        <div>
-          <p class="eyebrow dark">Purpose</p>
-          <h2>This is an expert review of the model inputs—not a request to endorse its results</h2>
-          <p>Please focus on assumptions within your area of expertise. “Not my expertise” is a useful response. Suggested values are recorded for a later model rerun; changing a field here does not recalculate the optimisation.</p>
-        </div>
-        <div class="review-principles">
-          <span><strong>1</strong> Check the current value</span>
-          <span><strong>2</strong> Consider its source and consequence</span>
-          <span><strong>3</strong> Record corrections or missing evidence</span>
-        </div>
+      <section class="assumption-section">
+        <h2>Benefits and appraisal</h2>
+        <ul class="assumption-list">
+          <li><strong>Appraisal frame.</strong><span>Benefits and costs are assessed over 30 years from 2026 using a 7% real discount rate, with 4% and 10% tested as sensitivities. Dashboard values are presented in 2025 Australian dollars.</span></li>
+          <li><strong>Benefits counted.</strong><span>The model includes avoided climate and air-pollution damage, vehicle operating costs, decongestion, health-system benefits, private health and a treated-share safety benefit.</span></li>
+          <li><strong>Simulation expansion.</strong><span>The calibrated 10% AToM population sample is expanded by ten and one modelled weekday is annualised using 230 days.</span></li>
+          <li><strong>Physical emissions.</strong><span>Avoided CO2, NOx, NO2 and PM2.5 are calculated from the simulated car trips estimated to switch. Emissions are reported separately from the broader economic benefits.</span></li>
+        </ul>
       </section>
 
-      <section class="general-comments">
-        <label for="overall-comments"><strong>Overall comments</strong><span>What is the most important assumption, omission or practical constraint for us to revisit?</span></label>
-        <textarea id="overall-comments" rows="3" placeholder="Optional overall comments…"></textarea>
+      <section class="assumption-section">
+        <h2>How projects are selected</h2>
+        <ul class="assumption-list">
+          <li><strong>Risk-adjusted central case.</strong><span>The central decision rule places 25% weight on outcomes from the weakest 10% of uptake scenarios. This is a decision preference, not a behavioural estimate.</span></li>
+          <li><strong>Use available funding.</strong><span>This view selects the strongest modelled portfolio within each funding ceiling and will generally continue adding projects as the ceiling increases.</span></li>
+          <li><strong>Find preferred scale.</strong><span>This view maximises risk-adjusted net benefit and may leave funding unspent when the next available project costs more than its estimated additional benefit.</span></li>
+          <li><strong>Funding points are independent.</strong><span>Each level is solved separately. Moving the slider does not represent an agreed construction sequence, and a project selected at one level is not guaranteed to remain selected at the next.</span></li>
+        </ul>
       </section>
 
-      <div id="assumption-sections" class="assumption-sections">
-        <div class="review-loading">Loading the model assumption register…</div>
-      </div>
-
-      <section id="corridor-review" class="corridor-review-section">
-        <div class="section-title">
-          <p class="eyebrow dark">Spatial data check</p>
-          <h2>Review a candidate corridor project</h2>
-          <p>Use the investment map to identify a project, or search by project ID here. Corridor comments are stored separately from the general assumptions.</p>
-        </div>
-
-        <div class="corridor-form-grid">
-          <div class="corridor-picker">
-            <label for="project-search">Project ID</label>
-            <input id="project-search" type="search" list="project-options" placeholder="e.g. SCC_01276" autocomplete="off">
-            <datalist id="project-options"></datalist>
-            <div id="project-summary" class="project-summary empty">Select a project to see its modelled status and length.</div>
-          </div>
-          <div class="corridor-fields">
-            <label>Is the mapped existing status correct?
-              <select id="corridor-status">
-                <option value="">Select…</option><option value="correct">Correct</option><option value="incorrect">Incorrect</option><option value="uncertain">Uncertain</option>
-              </select>
-            </label>
-            <label>Protected-treatment feasibility
-              <select id="corridor-feasibility">
-                <option value="">Select…</option><option value="straightforward">Straightforward</option><option value="complex">Complex</option><option value="not_feasible">Not feasible as represented</option><option value="uncertain">Uncertain</option>
-              </select>
-            </label>
-            <label>Current delivery status
-              <select id="corridor-delivery">
-                <option value="">Select…</option><option value="not_built">Not built</option><option value="already_built">Already built</option><option value="funded_or_planned">Funded or planned</option><option value="unknown">Unknown</option>
-              </select>
-            </label>
-            <label>Most plausible cost treatment
-              <select id="corridor-cost">
-                <option value="">Select…</option><option value="low">Low complexity</option><option value="p50">P50</option><option value="high">High complexity</option><option value="site_specific_estimate_needed">Site-specific estimate needed</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <label class="corridor-comment">Corridor evidence or comments
-          <textarea id="corridor-comment" rows="3" placeholder="Existing facility, planned works, physical constraints, intersections, likely treatment or supporting source…"></textarea>
-        </label>
-        <button id="save-corridor" class="primary-action inline" type="button" disabled>Save corridor review</button>
-        <div id="corridor-list" class="corridor-list"></div>
+      <section class="assumption-section limitation-section">
+        <h2>Important effects not quantified</h2>
+        <ul class="assumption-list">
+          <li><strong>Wider network effects.</strong><span>The model does not value benefits to existing bicycle riders, generated bicycle trips, safety-in-numbers, equity, amenity or network-learning effects.</span></li>
+          <li><strong>Land use and destinations.</strong><span>Changes in access to schools, stations, activity centres and other destinations are not modelled, nor is the additional uptake that might result from coordinated transport and land-use planning.</span></li>
+          <li><strong>Engineering feasibility.</strong><span>The selected lines are strategic investment options, not designs, funded projects or construction recommendations. Local review is needed before interpreting any location as deliverable.</span></li>
+        </ul>
       </section>
     </div>
   </main>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="review.js?v=1"></script>
+  <footer class="site-footer">
+    <div><span class="footer-badge">RESEARCH</span> The dashboard presents model outputs for review, not funded projects or engineering designs.</div>
+    <div><span class="footer-badge">CONTACT</span> <a href="mailto:afshin.jafari@rmit.edu.au">afshin.jafari@rmit.edu.au</a></div>
+  </footer>
 </body>
 </html>
