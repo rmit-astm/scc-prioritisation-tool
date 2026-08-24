@@ -9,7 +9,7 @@
   <title>Melbourne SCC investment explorer</title>
   <link rel="preconnect" href="https://basemaps.cartocdn.com">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <header class="site-header">
@@ -54,18 +54,30 @@
         </div>
       </section>
 
-      <details class="assumption-panel">
-        <summary><span><strong>Model settings</strong><small id="settings-summary">Permanent P50 · use available funding</small></span><span aria-hidden="true">⌄</span></summary>
+      <section class="model-settings-panel" aria-labelledby="model-settings-title">
+        <div class="settings-heading">
+          <div>
+            <p class="control-label" id="model-settings-title">Model settings</p>
+            <strong id="settings-summary">Permanent P50 · use available funding</strong>
+          </div>
+          <a href="review.html">All assumptions</a>
+        </div>
         <section class="control-section option-grid">
           <fieldset>
-            <legend>Delivery assumption</legend>
+            <legend>Delivery cost scenario</legend>
             <label class="radio-card">
               <input type="radio" name="scenario" value="p50" checked>
-              <span><strong>Permanent P50</strong><small>Central benchmark costs</small></span>
+              <span>
+                <span class="option-title"><strong>Permanent P50</strong><i class="info-bubble" tabindex="0" role="note" aria-label="P50 means the median or 50th-percentile benchmark estimate." data-tooltip="Central Victorian benchmark. New protected infrastructure: $1.00m/km. Upgrade to protected: $0.45m/km. Maintenance, renewal and programme management are also included.">?</i></span>
+                <small>Median benchmark · new $1.00m/km · upgrade $0.45m/km</small>
+              </span>
             </label>
             <label class="radio-card">
               <input type="radio" name="scenario" value="lowcx">
-              <span><strong>Low complexity</strong><small>Optimistic protected retrofit bound</small></span>
+              <span>
+                <span class="option-title"><strong>Low complexity</strong><i class="info-bubble" tabindex="0" role="note" aria-label="The low-complexity scenario is an optimistic protected-delivery cost case." data-tooltip="Optimistic protected-delivery case. New protected infrastructure: $0.50m/km. Upgrade to protected: $0.05m/km. This assumes straightforward construction or road-space reallocation and is not confirmed for every site.">?</i></span>
+                <small>Optimistic case · new $0.50m/km · upgrade $0.05m/km</small>
+              </span>
             </label>
           </fieldset>
 
@@ -73,15 +85,22 @@
             <legend>Allocation rule</legend>
             <label class="radio-card">
               <input type="radio" name="objective" value="benefit" checked>
-              <span><strong>Use available funding</strong><small>Select the strongest program within the funding limit</small></span>
+              <span>
+                <span class="option-title"><strong>Use available funding</strong><i class="info-bubble" tabindex="0" role="note" aria-label="This rule maximises benefit within the selected funding ceiling." data-tooltip="Selects the portfolio with the largest modelled benefit within the funding ceiling. It normally continues adding projects while funding is available.">?</i></span>
+                <small>Largest modelled benefit within the funding ceiling</small>
+              </span>
             </label>
             <label class="radio-card">
               <input type="radio" name="objective" value="net">
-              <span><strong>Find preferred scale</strong><small>Stops when further investment lowers risk-adjusted net benefit</small></span>
+              <span>
+                <span class="option-title"><strong>Find preferred scale</strong><i class="info-bubble" tabindex="0" role="note" aria-label="This rule maximises risk-adjusted net benefit and can leave funding unspent." data-tooltip="Selects the portfolio with the largest risk-adjusted benefit minus cost. It can leave funding unspent when adding another project reduces net value.">?</i></span>
+                <small>Can stop before the full funding ceiling is spent</small>
+              </span>
             </label>
           </fieldset>
         </section>
-      </details>
+        <p class="settings-note"><strong>Why P50 is the default:</strong> it is the central published benchmark that can be applied consistently across the network. The low-complexity rates produce more favourable BCRs, but the current data do not show which individual corridors can actually be delivered at those rates.</p>
+      </section>
 
       <section class="control-section metrics-section" aria-live="polite">
         <div class="metric"><span>Expected benefit</span><strong id="metric-benefit">$0m</strong><small>present value</small></div>
