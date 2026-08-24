@@ -6,6 +6,7 @@ const DATA_FILES = {
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
+const DATA_VERSION = "2026-08-24-2";
 const colours = { upgrade: "#1769aa", newLink: "#b74352", existing: "#3d7c5b", painted: "#c38b20", scc: "#707a76", candidate: "#827f78", brand: "#174f45" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
@@ -19,6 +20,9 @@ L.control.scale({ imperial: false, position: "bottomright" }).addTo(map);
 const lightBase = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
   maxZoom: 20, subdomains: "abcd", attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
 }).addTo(map);
+const streetBase = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+});
 map.setView([-37.82, 144.97], 10);
 
 const formatMoney = (value, digits = 1) => {
@@ -158,6 +162,8 @@ function render() {
   if (!p) return;
   document.getElementById("budget-output").textContent = p.budget_aud_m === 0 ? "$0 · today" : `${formatMoney(p.budget_aud_m, p.budget_aud_m < 1 ? 2 : 0)} available`;
   document.getElementById("spend-status").textContent = p.budget_aud_m === 0 ? "Current network" : (p.budget_binding ? "Funding used" : "Funding left unspent");
+  document.getElementById("settings-summary").textContent = `${state.scenario === "p50" ? "Permanent P50" : "Low complexity"} · ${state.objective === "net" ? "maximise net benefit" : "maximise benefits"}`;
+  document.querySelectorAll(".budget-presets button").forEach(button => button.classList.toggle("active", Number(button.dataset.budget) === p.budget_aud_m));
   setMetric("metric-benefit", formatMoney(p.expected_benefit_aud_m, 1), p.expected_benefit_aud_m > 0 ? "positive" : "");
   setMetric("metric-spend", formatMoney(p.spend_aud_m, 1));
   document.getElementById("metric-unspent").textContent = p.budget_aud_m === 0 ? "No new investment" : `${formatMoney(p.unspent_aud_m, 1)} unspent`;
@@ -175,6 +181,13 @@ function initialiseControls() {
   const slider = document.getElementById("budget-slider");
   slider.max = String(state.budgets.length - 1);
   slider.addEventListener("input", event => { state.budgetIndex = Number(event.target.value); render(); });
+  document.querySelectorAll(".budget-presets button").forEach(button => button.addEventListener("click", () => {
+    const index = state.budgets.indexOf(Number(button.dataset.budget));
+    if (index < 0) return;
+    state.budgetIndex = index;
+    slider.value = String(index);
+    render();
+  }));
   document.querySelectorAll('input[name="scenario"]').forEach(input => input.addEventListener("change", event => { state.scenario = event.target.value; render(); }));
   document.querySelectorAll('input[name="objective"]').forEach(input => input.addEventListener("change", event => { state.objective = event.target.value; render(); }));
   document.getElementById("zoom-selected").addEventListener("click", () => { if (state.selectedBounds) map.fitBounds(state.selectedBounds, { padding: [35, 35], maxZoom: 14 }); });
@@ -189,45 +202,67 @@ function initialiseControls() {
   });
 }
 
+async function fetchJson(path) {
+  const response = await fetch(`${path}?v=${DATA_VERSION}`);
+  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+  return response.json();
+}
+
 async function loadDashboard() {
   try {
-    const [model, scc, facilities, projects] = await Promise.all(Object.values(DATA_FILES).map(path => fetch(path).then(response => {
-      if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
-      return response.json();
-    })));
+    // Load the controls and selected projects first. Context layers are added
+    // afterwards so a slower SCC file or tile service cannot block the app.
+    const [model, projects] = await Promise.all([fetchJson(DATA_FILES.model), fetchJson(DATA_FILES.projects)]);
     state.model = model; state.projects = projects; state.budgets = model.metadata.budgets_aud_m;
     model.portfolios.forEach(p => state.portfolioByKey.set(keyFor(p.scenario, p.objective, p.budget_aud_m), p));
     projects.features.forEach(feature => state.projectById.set(feature.properties.project_id, feature));
 
-    const sccLayer = L.geoJSON(scc, {
-      style: { color: colours.scc, weight: 1.2, opacity: .64, dashArray: "5 5" },
-      onEachFeature: (feature, layer) => layer.bindTooltip(`Strategic Cycling Corridor · ${feature.properties.scc_type || "type not recorded"}`)
-    }).addTo(map);
-    const protectedLayer = L.geoJSON(facilities, {
-      filter: f => f.properties.facility_class === "Protected or off-road facility",
-      style: { color: colours.existing, weight: 2.1, opacity: .8 }
-    }).addTo(map);
-    const paintedLayer = L.geoJSON(facilities, {
-      filter: f => f.properties.facility_class === "Painted bicycle lane",
-      style: { color: colours.painted, weight: 1.5, opacity: .68 }
-    }).addTo(map);
+    const sccLayer = L.layerGroup().addTo(map);
+    const protectedLayer = L.layerGroup().addTo(map);
+    const paintedLayer = L.layerGroup().addTo(map);
     const candidateLayer = L.geoJSON(projects, {
       style: feature => projectStyle(feature, false),
       onEachFeature: (feature, layer) => layer.bindTooltip(`${feature.properties.project_id} · ${feature.properties.project_type}`)
     });
-    L.control.layers({ "Pale street map": lightBase }, {
+    L.control.layers({ "Pale street map": lightBase, "OpenStreetMap": streetBase }, {
       "Strategic Cycling Corridors": sccLayer,
       "Existing protected / off-road": protectedLayer,
       "Existing painted lanes": paintedLayer,
       "All candidate gaps": candidateLayer
     }, { position: "topright", collapsed: window.innerWidth < 760 }).addTo(map);
-    const bounds = sccLayer.getBounds();
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [12, 12] });
+
+    const b = model.metadata.map_bounds;
+    const melbourneBounds = L.latLngBounds([b.south, b.west], [b.north, b.east]);
+    map.setMaxBounds(melbourneBounds.pad(.12));
+    map.fitBounds(melbourneBounds, { padding: [8, 8] });
     initialiseControls();
     const generated = new Date(model.metadata.generated_at);
     document.getElementById("data-date").textContent = `Dashboard data generated ${generated.toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}. Values are ${model.metadata.currency}.`;
     render();
     document.getElementById("loading").remove();
+
+    // Add the heavier context layers after the interactive dashboard is ready.
+    Promise.all([fetchJson(DATA_FILES.scc), fetchJson(DATA_FILES.facilities)]).then(([scc, facilities]) => {
+      L.geoJSON(scc, {
+        renderer: L.canvas({ padding: .35 }),
+        style: { color: colours.scc, weight: 1.1, opacity: .58, dashArray: "5 5" },
+        onEachFeature: (feature, layer) => layer.bindTooltip(`Strategic Cycling Corridor · ${feature.properties.scc_type || "type not recorded"}`)
+      }).addTo(sccLayer);
+      L.geoJSON(facilities, {
+        renderer: L.canvas({ padding: .35 }),
+        filter: f => f.properties.facility_class === "Protected or off-road facility",
+        style: { color: colours.existing, weight: 2, opacity: .78 }
+      }).addTo(protectedLayer);
+      L.geoJSON(facilities, {
+        renderer: L.canvas({ padding: .35 }),
+        filter: f => f.properties.facility_class === "Painted bicycle lane",
+        style: { color: colours.painted, weight: 1.35, opacity: .62 }
+      }).addTo(paintedLayer);
+      if (state.selectedLayer) state.selectedLayer.bringToFront();
+    }).catch(error => {
+      console.error("Context layer load failed", error);
+      document.querySelector(".map-note").textContent = "Selected projects are available, but one or more background cycling layers could not be loaded.";
+    });
   } catch (error) {
     console.error(error);
     const loading = document.getElementById("loading");

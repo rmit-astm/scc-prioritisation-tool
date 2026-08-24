@@ -7,10 +7,9 @@
   <meta property="og:title" content="Melbourne SCC investment explorer">
   <meta property="og:description" content="An interactive research prototype for reviewing the location, scale and estimated returns of protected-cycling investment.">
   <title>Melbourne SCC investment explorer</title>
-  <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://basemaps.cartocdn.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynhMZJOZEKtnkRZ9AZ1Cj1S6Yh7U=" crossorigin="">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
   <header class="site-header">
@@ -34,34 +33,45 @@
         </div>
         <input id="budget-slider" type="range" min="0" max="11" value="0" step="1" aria-label="Available funding level">
         <div class="range-ends"><span>$0</span><span>$100m</span></div>
+        <div class="budget-presets" aria-label="Common funding levels">
+          <button type="button" data-budget="0">Today</button>
+          <button type="button" data-budget="5">$5m</button>
+          <button type="button" data-budget="10">$10m</button>
+          <button type="button" data-budget="20">$20m</button>
+          <button type="button" data-budget="50">$50m</button>
+          <button type="button" data-budget="100">$100m</button>
+        </div>
         <p class="control-help">The slider moves between solved funding levels; it does not interpolate new projects.</p>
       </section>
 
-      <section class="control-section option-grid">
-        <fieldset>
-          <legend>Delivery assumption</legend>
-          <label class="radio-card">
-            <input type="radio" name="scenario" value="p50" checked>
-            <span><strong>Permanent P50</strong><small>Central benchmark costs</small></span>
-          </label>
-          <label class="radio-card">
-            <input type="radio" name="scenario" value="lowcx">
-            <span><strong>Low complexity</strong><small>Optimistic protected retrofit bound</small></span>
-          </label>
-        </fieldset>
+      <details class="assumption-panel">
+        <summary><span><strong>Model settings</strong><small id="settings-summary">Permanent P50 · maximise net benefit</small></span><span aria-hidden="true">⌄</span></summary>
+        <section class="control-section option-grid">
+          <fieldset>
+            <legend>Delivery assumption</legend>
+            <label class="radio-card">
+              <input type="radio" name="scenario" value="p50" checked>
+              <span><strong>Permanent P50</strong><small>Central benchmark costs</small></span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="scenario" value="lowcx">
+              <span><strong>Low complexity</strong><small>Optimistic protected retrofit bound</small></span>
+            </label>
+          </fieldset>
 
-        <fieldset>
-          <legend>Allocation rule</legend>
-          <label class="radio-card">
-            <input type="radio" name="objective" value="net" checked>
-            <span><strong>Maximise net benefit</strong><small>May leave funding unspent</small></span>
-          </label>
-          <label class="radio-card">
-            <input type="radio" name="objective" value="benefit">
-            <span><strong>Maximise benefits</strong><small>Extends program to the funding limit</small></span>
-          </label>
-        </fieldset>
-      </section>
+          <fieldset>
+            <legend>Allocation rule</legend>
+            <label class="radio-card">
+              <input type="radio" name="objective" value="net" checked>
+              <span><strong>Maximise net benefit</strong><small>May leave funding unspent</small></span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="objective" value="benefit">
+              <span><strong>Maximise benefits</strong><small>Extends program to the funding limit</small></span>
+            </label>
+          </fieldset>
+        </section>
+      </details>
 
       <section class="control-section metrics-section" aria-live="polite">
         <div class="metric"><span>Expected benefit</span><strong id="metric-benefit">$0m</strong><small>present value</small></div>
@@ -130,7 +140,7 @@
     </div>
   </dialog>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="app.js"></script>
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
