@@ -6,7 +6,7 @@ const DATA_FILES = {
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
-const DATA_VERSION = "2026-08-25-4";
+const DATA_VERSION = "2026-08-26-1";
 const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", candidate: "#827f78", brand: "#1f6f65" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
@@ -244,7 +244,7 @@ async function loadDashboard() {
     L.control.layers({ "Pale street map": lightBase, "OpenStreetMap": streetBase }, {
       "Strategic Cycling Corridors": sccLayer,
       "Existing protected / off-road": protectedLayer,
-      "Existing painted lanes": paintedLayer,
+      "Existing painted / other unprotected": paintedLayer,
       "All candidate gaps": candidateLayer
     }, { position: "topright", collapsed: window.innerWidth < 760 }).addTo(map);
 
@@ -272,7 +272,8 @@ async function loadDashboard() {
       }).addTo(protectedLayer);
       L.geoJSON(facilities, {
         renderer: L.canvas({ padding: .35 }),
-        filter: f => f.properties.facility_class === "Painted bicycle lane",
+        filter: f => ["Painted or other unprotected facility", "Painted bicycle lane"]
+          .includes(f.properties.facility_class),
         style: { color: colours.painted, weight: 1.35, opacity: .62 }
       }).addTo(paintedLayer);
       if (state.selectedLayer) state.selectedLayer.bringToFront();

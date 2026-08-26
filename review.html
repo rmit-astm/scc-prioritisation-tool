@@ -23,16 +23,16 @@
   <main class="assumptions-page">
     <header class="assumptions-intro">
       <h2>Assumptions currently used</h2>
-      <p>This is a working summary of the inputs used in the dashboard. The network and results will change after the 2026 infrastructure and SCC update.</p>
+      <p>This is a working summary of the inputs used in the dashboard. The spatial inputs have been updated to the current 2026 SCC release and a July 2026 OSM snapshot.</p>
     </header>
 
     <div class="assumption-sections">
       <section class="assumption-section">
         <h2>Data dates</h2>
         <ul class="assumption-list">
-          <li><strong>SCC network:</strong><span>the current candidate network uses the Victorian Government's 2020 Strategic Cycling Corridor layer.</span></li>
-          <li><strong>Existing bicycle facilities:</strong><span>the current results use cycling attributes held in the MATSim network. These attributes came from an older OSM extract whose exact date was not recorded.</span></li>
-          <li><strong>2026 network update:</strong><span>a Greater Melbourne OSM extract downloaded on 23 July 2026 is available and will be used when the latest SCC layer is received.</span></li>
+          <li><strong>SCC network:</strong><span>the candidate network uses the authoritative Victorian Planning spatial-service SCC layer published 25 May 2026. It contains 1,404 statewide line features: 173 C1 and 1,231 C2 corridors.</span></li>
+          <li><strong>Existing bicycle facilities:</strong><span>cycling attributes are refreshed from the Greater Melbourne OSM extract acquired on 23 July 2026, while retaining the calibrated MATSim topology and link IDs.</span></li>
+          <li><strong>Study area:</strong><span>the statewide SCC layer is clipped to the Greater Melbourne MATSim network extent for matching, project generation and display.</span></li>
           <li><strong>Travel demand and emissions:</strong><span>car trips, routes and emissions come from the calibrated 10% AToM baseline. This is not a newly calibrated 2026 travel-demand model.</span></li>
           <li><strong>Economic appraisal:</strong><span>the appraisal starts in 2026. Dashboard monetary values are expressed in 2025 Australian dollars.</span></li>
         </ul>

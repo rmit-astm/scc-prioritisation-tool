@@ -1,5 +1,5 @@
 "file","source","bytes"
-"dashboard_data.json","results/frontier and per-run portfolio outputs",278140
-"scc_network.geojson","data/2020_Strategic_Cycling_Corridors_(SCC)/2020_Strategic_Cycling_Corridors_(SCC).shp",346847
-"existing_bicycle_facilities.geojson","data/processed/matsim_network.rds",1589115
-"candidate_projects.geojson","data/processed/scc_projects.gpkg",1030600
+"dashboard_data.json","results/frontier and per-run portfolio outputs",385706
+"scc_network.geojson","data/Greater_Melbourne_SCC_2026.gpkg",348473
+"existing_bicycle_facilities.geojson","data/processed/matsim_network.rds",2816664
+"candidate_projects.geojson","data/processed/scc_projects.gpkg",927206
