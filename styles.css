@@ -110,6 +110,16 @@ fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
 .popup-grid span:nth-child(odd) { color: var(--muted); }
 .popup-note { max-width: 250px; margin: 9px 0 0; color: var(--muted); font-size: 10.5px; }
 .popup-review-link { display: inline-block; margin-top: 9px; color: #20639b; font-size: 11px; font-weight: 800; text-underline-offset: 2px; }
+.lga-result-tooltip { max-width: 315px; padding: 0; border: 1px solid #cbd4d9; border-radius: 8px; box-shadow: 0 5px 18px rgba(18,35,49,.18); }
+.lga-result-tooltip::before { display: none; }
+.lga-summary { min-width: 275px; padding: 11px 12px; color: var(--text); white-space: normal; }
+.lga-summary h3 { margin: 0 0 8px; font-size: 15px; }
+.lga-summary > p { margin: 6px 0 0; color: var(--muted); font-size: 10px; line-height: 1.35; }
+.lga-summary-grid { display: grid; grid-template-columns: minmax(130px, 1fr) auto; gap: 4px 13px; font-size: 11px; }
+.lga-summary-grid span { color: var(--muted); }
+.lga-summary-grid strong { text-align: right; font-variant-numeric: tabular-nums; }
+.lga-summary-grid strong.good { color: var(--accent); }
+.lga-summary-grid strong.weak { color: #a53a43; }
 .map-key { position: absolute; left: 14px; bottom: 40px; z-index: 500; min-width: 210px; display: grid; gap: 6px; padding: 12px 13px; background: rgba(255,255,255,.96); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); font-size: 11px; }
 .map-key strong { margin-bottom: 2px; font-size: 11.5px; }
 .map-key span { display: flex; align-items: center; gap: 8px; }
@@ -119,7 +129,7 @@ fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
 .line-swatch.existing { border-color: var(--existing); }
 .line-swatch.painted { border-color: var(--painted); border-top-width: 2px; }
 .line-swatch.scc { border-color: var(--scc); border-top-width: 1px; border-top-style: dashed; }
-.line-swatch.lga { border-color: #7b8993; border-top-width: 1px; background: rgba(220,231,235,.5); }
+.line-swatch.lga { border-color: #7b8993; border-top-width: 2px; background: rgba(220,231,235,.5); }
 .map-note { position: absolute; right: 12px; bottom: 12px; z-index: 500; max-width: 430px; padding: 7px 10px; color: #4d5562; background: rgba(255,255,255,.94); border: 1px solid rgba(224,228,234,.9); border-radius: 5px; font-size: 10.5px; }
 .loading-state { position: absolute; inset: 0; z-index: 1000; display: grid; place-items: center; color: var(--navy); background: rgba(244,246,248,.92); font-size: 14px; font-weight: 650; }
 .loading-state.error { padding: 24px; color: #a52d39; text-align: center; }

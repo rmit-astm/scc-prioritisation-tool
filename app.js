@@ -4,21 +4,38 @@ const DATA_FILES = {
   model: "data/dashboard_data.json",
   scc: "data/scc_network.geojson",
   lgas: "data/greater_melbourne_lgas.geojson",
+  lgaAllocations: "data/project_lga_allocations.json",
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
-const DATA_VERSION = "2026-08-28-2";
+const DATA_VERSION = "2026-08-28-3";
 const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", lga: "#7b8993", candidate: "#827f78", brand: "#1f6f65" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
+  lgaAllocations: new Map(), lgaSummaries: new Map(),
   budgets: [], scenario: "p50", objective: "benefit", budgetIndex: 0,
   selectedLayer: null, selectedBounds: null
 };
 
 const map = L.map("map", { zoomControl: false, preferCanvas: true, minZoom: 7 });
-map.createPane("lgaPane");
-map.getPane("lgaPane").style.zIndex = 350;
-map.getPane("lgaPane").style.pointerEvents = "none";
+[
+  ["lgaPane", 350],
+  ["sccPane", 430],
+  ["candidatePane", 440],
+  ["selectedPane", 500]
+].forEach(([name, zIndex]) => {
+  map.createPane(name);
+  map.getPane(name).style.zIndex = zIndex;
+  // SVG paths opt back into pointer events individually. Empty areas of the
+  // upper panes therefore do not block the LGA polygon underneath.
+  map.getPane(name).style.pointerEvents = "none";
+});
+map.getPane("lgaPane").style.pointerEvents = "auto";
+map.getPane("overlayPane").style.pointerEvents = "none";
+const lgaRenderer = L.svg({ pane: "lgaPane", padding: .35 });
+const sccRenderer = L.svg({ pane: "sccPane", padding: .35 });
+const candidateRenderer = L.svg({ pane: "candidatePane", padding: .35 });
+const selectedRenderer = L.svg({ pane: "selectedPane", padding: .35 });
 L.control.zoom({ position: "topright" }).addTo(map);
 L.control.scale({ imperial: false, position: "bottomright" }).addTo(map);
 const osmAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>';
@@ -68,6 +85,66 @@ function selectedPopup(feature, selectedMeta) {
     <a class="popup-review-link" href="mailto:afshin.jafari@rmit.edu.au?subject=${emailSubject}&body=${emailBody}">Email a comment about this project</a>`;
 }
 
+function calculateLgaSummaries(p) {
+  const summaries = new Map();
+  const totalStandaloneBenefit = p.selected_projects.reduce(
+    (total, project) => total + Math.max(0, Number(project.singleton_benefit_aud_m) || 0),
+    0
+  );
+
+  p.selected_projects.forEach(project => {
+    const feature = state.projectById.get(project.project_id);
+    const allocations = state.lgaAllocations.get(project.project_id) || [];
+    allocations.forEach(allocation => {
+      if (!summaries.has(allocation.lga_name)) {
+        summaries.set(allocation.lga_name, {
+          projectIds: new Set(), lengthKm: 0, upgradeKm: 0, newKm: 0,
+          costM: 0, standaloneWeightM: 0, benefitM: 0, npvM: 0, bcr: null
+        });
+      }
+      const summary = summaries.get(allocation.lga_name);
+      summary.projectIds.add(project.project_id);
+      summary.lengthKm += allocation.length_km;
+      summary.costM += (Number(project.pv_cost_aud_m) || 0) * allocation.share;
+      summary.standaloneWeightM += Math.max(0, Number(project.singleton_benefit_aud_m) || 0) * allocation.share;
+      if (feature?.properties.status === "upgrade_candidate") summary.upgradeKm += allocation.length_km;
+      else summary.newKm += allocation.length_km;
+    });
+  });
+
+  summaries.forEach(summary => {
+    summary.benefitM = totalStandaloneBenefit > 0
+      ? p.expected_benefit_aud_m * summary.standaloneWeightM / totalStandaloneBenefit
+      : 0;
+    summary.npvM = summary.benefitM - summary.costM;
+    summary.bcr = summary.costM > 0 ? summary.benefitM / summary.costM : null;
+  });
+  return summaries;
+}
+
+function lgaTooltip(feature) {
+  const name = feature.properties.lga_name || "Local government area";
+  const summary = state.lgaSummaries.get(name);
+  if (!summary) {
+    return `<div class="lga-summary"><h3>${name}</h3><p>No selected investment in this LGA at the current funding level.</p></div>`;
+  }
+  const bcrClass = summary.bcr >= 1 ? "good" : "weak";
+  return `<div class="lga-summary">
+    <h3>${name}</h3>
+    <div class="lga-summary-grid">
+      <span>Selected infrastructure</span><strong>${formatNumber(summary.lengthKm, 2)} km</strong>
+      <span>Projects touching LGA</span><strong>${summary.projectIds.size}</strong>
+      <span>Convert to protected</span><strong>${formatNumber(summary.upgradeKm, 2)} km</strong>
+      <span>New protected links</span><strong>${formatNumber(summary.newKm, 2)} km</strong>
+      <span>Allocated investment</span><strong>${formatMoney(summary.costM, 2)}</strong>
+      <span>Allocated benefit</span><strong>${formatMoney(summary.benefitM, 2)}</strong>
+      <span>Allocated net benefit</span><strong>${formatMoney(summary.npvM, 2)}</strong>
+      <span>Indicative LGA BCR</span><strong class="${bcrClass}">${formatNumber(summary.bcr, 2)}</strong>
+    </div>
+    <p>Length and cost follow the selected project portions inside the LGA. Whole-program benefits are allocated using those portions and their standalone modelled benefits; they are not separately re-estimated for the LGA.</p>
+  </div>`;
+}
+
 function setMetric(id, value, className = "") {
   const el = document.getElementById(id);
   el.textContent = value;
@@ -94,6 +171,8 @@ function updateSelectedLayer(p) {
   if (state.selectedLayer) map.removeLayer(state.selectedLayer);
   const selectedMeta = new Map(p.selected_projects.map(x => [x.project_id, x]));
   state.selectedLayer = L.geoJSON(state.projects, {
+    pane: "selectedPane",
+    renderer: selectedRenderer,
     filter: feature => selectedMeta.has(feature.properties.project_id),
     style: feature => projectStyle(feature, true),
     onEachFeature: (feature, layer) => {
@@ -191,6 +270,7 @@ function render() {
     document.getElementById("investment-message-copy").textContent = `${formatMoney(p.unspent_aud_m, 1)} is left unspent, so the selected map does not expand above this preferred scale.`;
   }
   document.getElementById("interpretation").textContent = interpretationFor(p);
+  state.lgaSummaries = calculateLgaSummaries(p);
   updateSelectedLayer(p); renderProjectList(p); drawReturnChart(p);
 }
 
@@ -234,16 +314,26 @@ async function loadDashboard() {
   try {
     // Load the controls and selected projects first. Context layers are added
     // afterwards so a slower SCC file or tile service cannot block the app.
-    const [model, projects] = await Promise.all([fetchJson(DATA_FILES.model), fetchJson(DATA_FILES.projects)]);
+    const [model, projects, lgaAllocationData] = await Promise.all([
+      fetchJson(DATA_FILES.model),
+      fetchJson(DATA_FILES.projects),
+      fetchJson(DATA_FILES.lgaAllocations)
+    ]);
     state.model = model; state.projects = projects; state.budgets = model.metadata.budgets_aud_m;
     model.portfolios.forEach(p => state.portfolioByKey.set(keyFor(p.scenario, p.objective, p.budget_aud_m), p));
     projects.features.forEach(feature => state.projectById.set(feature.properties.project_id, feature));
+    lgaAllocationData.allocations.forEach(allocation => {
+      if (!state.lgaAllocations.has(allocation.project_id)) state.lgaAllocations.set(allocation.project_id, []);
+      state.lgaAllocations.get(allocation.project_id).push(allocation);
+    });
 
     const sccLayer = L.layerGroup().addTo(map);
     const lgaLayer = L.layerGroup();
     const protectedLayer = L.layerGroup().addTo(map);
     const paintedLayer = L.layerGroup().addTo(map);
     const candidateLayer = L.geoJSON(projects, {
+      pane: "candidatePane",
+      renderer: candidateRenderer,
       style: feature => projectStyle(feature, false),
       onEachFeature: (feature, layer) => layer.bindTooltip(`${feature.properties.project_id} · ${feature.properties.project_type}`)
     });
@@ -268,17 +358,20 @@ async function loadDashboard() {
     // Add the heavier context layers after the interactive dashboard is ready.
     Promise.all([fetchJson(DATA_FILES.scc), fetchJson(DATA_FILES.facilities)]).then(([scc, facilities]) => {
       L.geoJSON(scc, {
-        renderer: L.canvas({ padding: .35 }),
+        pane: "sccPane",
+        renderer: sccRenderer,
         style: { color: colours.scc, weight: 1.1, opacity: .58, dashArray: "5 5" },
         onEachFeature: (feature, layer) => layer.bindTooltip(`Strategic Cycling Corridor · ${feature.properties.scc_type || "type not recorded"}`)
       }).addTo(sccLayer);
       L.geoJSON(facilities, {
         renderer: L.canvas({ padding: .35 }),
+        interactive: false,
         filter: f => f.properties.facility_class === "Protected or off-road facility",
         style: { color: colours.existing, weight: 2, opacity: .78 }
       }).addTo(protectedLayer);
       L.geoJSON(facilities, {
         renderer: L.canvas({ padding: .35 }),
+        interactive: false,
         filter: f => ["Painted or other unprotected facility", "Painted bicycle lane"]
           .includes(f.properties.facility_class),
         style: { color: colours.painted, weight: 1.35, opacity: .62 }
@@ -290,11 +383,18 @@ async function loadDashboard() {
     });
 
     fetchJson(DATA_FILES.lgas).then(lgas => {
-      L.geoJSON(lgas, {
-        renderer: L.canvas({ pane: "lgaPane", padding: .35 }),
+      const lgaGeoJson = L.geoJSON(lgas, {
+        renderer: lgaRenderer,
         pane: "lgaPane",
-        interactive: false,
-        style: { color: colours.lga, weight: 1.05, opacity: .62, fillColor: "#dce7eb", fillOpacity: .14 }
+        interactive: true,
+        style: { color: colours.lga, weight: 1.65, opacity: .78, fillColor: "#dce7eb", fillOpacity: .13 },
+        onEachFeature: (feature, layer) => {
+          layer.bindTooltip(() => lgaTooltip(feature), {
+            sticky: true, direction: "auto", opacity: .98, className: "lga-result-tooltip"
+          });
+          layer.on("mouseover", () => layer.setStyle({ weight: 2.2, fillOpacity: .19 }));
+          layer.on("mouseout", () => lgaGeoJson.resetStyle(layer));
+        }
       }).addTo(lgaLayer);
     }).catch(error => {
       console.error("LGA layer load failed", error);
