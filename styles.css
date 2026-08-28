@@ -119,7 +119,7 @@ fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
 .line-swatch.existing { border-color: var(--existing); }
 .line-swatch.painted { border-color: var(--painted); border-top-width: 2px; }
 .line-swatch.scc { border-color: var(--scc); border-top-width: 1px; border-top-style: dashed; }
-.line-swatch.lga { border-color: #4f5965; border-top-width: 1px; }
+.line-swatch.lga { border-color: #7b8993; border-top-width: 1px; background: rgba(220,231,235,.5); }
 .map-note { position: absolute; right: 12px; bottom: 12px; z-index: 500; max-width: 430px; padding: 7px 10px; color: #4d5562; background: rgba(255,255,255,.94); border: 1px solid rgba(224,228,234,.9); border-radius: 5px; font-size: 10.5px; }
 .loading-state { position: absolute; inset: 0; z-index: 1000; display: grid; place-items: center; color: var(--navy); background: rgba(244,246,248,.92); font-size: 14px; font-weight: 650; }
 .loading-state.error { padding: 24px; color: #a52d39; text-align: center; }

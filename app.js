@@ -7,8 +7,8 @@ const DATA_FILES = {
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
-const DATA_VERSION = "2026-08-28-1";
-const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", lga: "#4f5965", candidate: "#827f78", brand: "#1f6f65" };
+const DATA_VERSION = "2026-08-28-2";
+const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", lga: "#7b8993", candidate: "#827f78", brand: "#1f6f65" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
   budgets: [], scenario: "p50", objective: "benefit", budgetIndex: 0,
@@ -16,6 +16,9 @@ const state = {
 };
 
 const map = L.map("map", { zoomControl: false, preferCanvas: true, minZoom: 7 });
+map.createPane("lgaPane");
+map.getPane("lgaPane").style.zIndex = 350;
+map.getPane("lgaPane").style.pointerEvents = "none";
 L.control.zoom({ position: "topright" }).addTo(map);
 L.control.scale({ imperial: false, position: "bottomright" }).addTo(map);
 const osmAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>';
@@ -246,10 +249,10 @@ async function loadDashboard() {
     });
     L.control.layers({ "Pale OpenStreetMap": lightBase, "Standard OpenStreetMap": streetBase }, {
       "Strategic Cycling Corridors": sccLayer,
-      "Local government boundaries": lgaLayer,
       "Existing protected / off-road": protectedLayer,
       "Existing painted / other unprotected": paintedLayer,
-      "All candidate gaps": candidateLayer
+      "All candidate gaps": candidateLayer,
+      "Local government boundaries": lgaLayer
     }, { position: "topright", collapsed: window.innerWidth < 760 }).addTo(map);
 
     const b = model.metadata.map_bounds;
@@ -288,9 +291,10 @@ async function loadDashboard() {
 
     fetchJson(DATA_FILES.lgas).then(lgas => {
       L.geoJSON(lgas, {
-        renderer: L.canvas({ padding: .35 }),
-        style: { color: colours.lga, weight: 1.15, opacity: .78, fillColor: "#ffffff", fillOpacity: .025 },
-        onEachFeature: (feature, layer) => layer.bindTooltip(feature.properties.lga_name || "Local government area", { sticky: true })
+        renderer: L.canvas({ pane: "lgaPane", padding: .35 }),
+        pane: "lgaPane",
+        interactive: false,
+        style: { color: colours.lga, weight: 1.05, opacity: .62, fillColor: "#dce7eb", fillOpacity: .14 }
       }).addTo(lgaLayer);
     }).catch(error => {
       console.error("LGA layer load failed", error);
