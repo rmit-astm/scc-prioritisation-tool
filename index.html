@@ -7,9 +7,9 @@
   <meta property="og:title" content="Melbourne SCC investment explorer">
   <meta property="og:description" content="An interactive research prototype for reviewing the location, scale and estimated returns of protected-cycling investment.">
   <title>Melbourne SCC investment explorer</title>
-  <link rel="preconnect" href="https://basemaps.cartocdn.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
   <header class="site-header">
@@ -139,6 +139,7 @@
         <span><i class="line-swatch existing"></i>Existing protected / off-road</span>
         <span><i class="line-swatch painted"></i>Existing painted / other unprotected</span>
         <span><i class="line-swatch scc"></i>Strategic Cycling Corridor</span>
+        <span><i class="line-swatch lga"></i>Local government boundary</span>
       </div>
       <div class="map-note">Click a selected segment for project details. Use the layer control to inspect candidate gaps and facilities represented in the model baseline.</div>
       <div id="loading" class="loading-state">Preparing map and model results…</div>
@@ -175,6 +176,6 @@
   </dialog>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

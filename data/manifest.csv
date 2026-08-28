@@ -1,5 +1,6 @@
 "file","source","bytes"
 "dashboard_data.json","results/frontier and per-run portfolio outputs",385706
 "scc_network.geojson","data/Greater_Melbourne_SCC_2026.gpkg",348473
+"greater_melbourne_lgas.geojson","data/LGA_POLYGON/LGA_POLYGON.shp",221587
 "existing_bicycle_facilities.geojson","data/processed/matsim_network.rds",2816664
 "candidate_projects.geojson","data/processed/scc_projects.gpkg",927206

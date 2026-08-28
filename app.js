@@ -3,11 +3,12 @@
 const DATA_FILES = {
   model: "data/dashboard_data.json",
   scc: "data/scc_network.geojson",
+  lgas: "data/greater_melbourne_lgas.geojson",
   facilities: "data/existing_bicycle_facilities.geojson",
   projects: "data/candidate_projects.geojson"
 };
-const DATA_VERSION = "2026-08-26-1";
-const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", candidate: "#827f78", brand: "#1f6f65" };
+const DATA_VERSION = "2026-08-28-1";
+const colours = { upgrade: "#20639b", newLink: "#c0392b", existing: "#2f7d57", painted: "#d09a2a", scc: "#747b86", lga: "#4f5965", candidate: "#827f78", brand: "#1f6f65" };
 const state = {
   model: null, projects: null, projectById: new Map(), portfolioByKey: new Map(),
   budgets: [], scenario: "p50", objective: "benefit", budgetIndex: 0,
@@ -17,11 +18,12 @@ const state = {
 const map = L.map("map", { zoomControl: false, preferCanvas: true, minZoom: 7 });
 L.control.zoom({ position: "topright" }).addTo(map);
 L.control.scale({ imperial: false, position: "bottomright" }).addTo(map);
-const lightBase = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-  maxZoom: 20, subdomains: "abcd", attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+const osmAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>';
+const lightBase = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19, attribution: osmAttribution, className: "pale-basemap-tiles"
 }).addTo(map);
 const streetBase = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+  maxZoom: 19, attribution: osmAttribution
 });
 map.setView([-37.82, 144.97], 10);
 
@@ -235,14 +237,16 @@ async function loadDashboard() {
     projects.features.forEach(feature => state.projectById.set(feature.properties.project_id, feature));
 
     const sccLayer = L.layerGroup().addTo(map);
+    const lgaLayer = L.layerGroup();
     const protectedLayer = L.layerGroup().addTo(map);
     const paintedLayer = L.layerGroup().addTo(map);
     const candidateLayer = L.geoJSON(projects, {
       style: feature => projectStyle(feature, false),
       onEachFeature: (feature, layer) => layer.bindTooltip(`${feature.properties.project_id} · ${feature.properties.project_type}`)
     });
-    L.control.layers({ "Pale street map": lightBase, "OpenStreetMap": streetBase }, {
+    L.control.layers({ "Pale OpenStreetMap": lightBase, "Standard OpenStreetMap": streetBase }, {
       "Strategic Cycling Corridors": sccLayer,
+      "Local government boundaries": lgaLayer,
       "Existing protected / off-road": protectedLayer,
       "Existing painted / other unprotected": paintedLayer,
       "All candidate gaps": candidateLayer
@@ -280,6 +284,16 @@ async function loadDashboard() {
     }).catch(error => {
       console.error("Context layer load failed", error);
       document.querySelector(".map-note").textContent = "Selected projects are available, but one or more background cycling layers could not be loaded.";
+    });
+
+    fetchJson(DATA_FILES.lgas).then(lgas => {
+      L.geoJSON(lgas, {
+        renderer: L.canvas({ padding: .35 }),
+        style: { color: colours.lga, weight: 1.15, opacity: .78, fillColor: "#ffffff", fillOpacity: .025 },
+        onEachFeature: (feature, layer) => layer.bindTooltip(feature.properties.lga_name || "Local government area", { sticky: true })
+      }).addTo(lgaLayer);
+    }).catch(error => {
+      console.error("LGA layer load failed", error);
     });
   } catch (error) {
     console.error(error);
